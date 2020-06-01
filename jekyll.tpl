@@ -3,9 +3,11 @@
 {%- block header -%}
 ---
 layout: post
-title: {{title}}
-category: {{nb.metadata['category']}}
-tags: {{nb.metadata['tags']}}
+title: {{nb.metadata['title']}}
+date:   {{nb.metadata['modified_date']}}
+author: sangjae kang
+categories: {{nb.metadata['categories']}}
+tags:	{{nb.metadata['tags']}}
 use_math: true
 ---
 {%- endblock header -%}
