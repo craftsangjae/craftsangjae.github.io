@@ -11,8 +11,8 @@ exclude:
   - "/vendor/"
 
 # Site settings
-title: 코딩 개발 공방
-subtitle: "1 day, 1 blog, 1 code"
+title: 개발 공방
+subtitle: "계속 하다 보면 장인이 되겠지"
 email: craftsangjae@gmail.com
 name: SangJae Kang
 description: >
