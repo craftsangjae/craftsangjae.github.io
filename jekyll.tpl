@@ -13,9 +13,6 @@ use_math: true
 {%- endblock header -%}
 
 {% block in_prompt %}
-<div class="prompt input_prompt">
-In&nbsp;[{{ cell.execution_count }}]:
-</div>
 {% endblock in_prompt %}
 
 {% block input %}
@@ -23,6 +20,10 @@ In&nbsp;[{{ cell.execution_count }}]:
 {{ super() }}
 </div>
 {% endblock input %}
+
+{% block output_prompt %}
+Output : 
+{% endblock output_prompt %}
 
 {% block stream %}
 {:.output_stream}
