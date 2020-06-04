@@ -43,9 +43,8 @@ np.set_printoptions(precision=3)
 from tensorflow.keras.utils import get_file
 
 fpath = get_file("bank-full.csv",
-                 "https://drive.google.com/file/d/16Z2Jyg9BPB8kLeuGDRNLpXZdF77W32_p/view?usp=sharing")
-
-df = pd.read_csv("./bank-full.csv", sep=';')
+                 "https://docs.google.com/uc?id=16Z2Jyg9BPB8kLeuGDRNLpXZdF77W32_p")
+df = pd.read_csv(fpath, sep=';')
 ```
 
 </div>
