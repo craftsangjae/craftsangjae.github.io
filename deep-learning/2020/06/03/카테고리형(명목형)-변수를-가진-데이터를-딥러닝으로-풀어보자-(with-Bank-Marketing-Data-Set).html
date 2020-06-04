@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>카테고리형(명목형) 변수를 가진 데이터를 딥러닝으로 풀어보자 (with Bank Marketing Data Set)</title>
+  <meta name="description" content="Objective">
+  
+  <meta name="author" content="SangJae Kang">
+  <meta name="copyright" content="&copy; SangJae Kang 2020">
+  
+
+  <!-- External libraries -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/github.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/css/lightbox.css">
+
+  <!-- Favicon and other icons (made with http://www.favicon-generator.org/) -->
+  <link rel="shortcut icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" sizes="57x57" href="/assets/icons/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/assets/icons/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/assets/icons/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/assets/icons/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/assets/icons/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/assets/icons/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/assets/icons/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/assets/icons/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192"  href="/assets/icons/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/icons/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16.png">
+  <link rel="manifest" href="/assets/icons/manifest.json">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="/assets/icons/ms-icon-144x144.png">
+  <meta name="theme-color" content="#ffffff">
+
+  
+  <!-- Facebook OGP cards -->
+  <meta property="og:description" content="Objective" />
+  <meta property="og:url" content="craftsangjae.github.io/deep-learning/2020/06/03/%EC%B9%B4%ED%85%8C%EA%B3%A0%EB%A6%AC%ED%98%95(%EB%AA%85%EB%AA%A9%ED%98%95)-%EB%B3%80%EC%88%98%EB%A5%BC-%EA%B0%80%EC%A7%84-%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A5%BC-%EB%94%A5%EB%9F%AC%EB%8B%9D%EC%9C%BC%EB%A1%9C-%ED%92%80%EC%96%B4%EB%B3%B4%EC%9E%90-(with-Bank-Marketing-Data-Set).html">
+  <meta property="og:site_name" content="개발 공방" />
+  <meta property="og:title" content="카테고리형(명목형) 변수를 가진 데이터를 딥러닝으로 풀어보자 (with Bank Marketing Data Set)" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="craftsangjae.github.io/assets/logo.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="612" />
+  <meta property="og:image:height" content="605" />
+  
+
+  
+  <!-- Twitter: card tags -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="카테고리형(명목형) 변수를 가진 데이터를 딥러닝으로 풀어보자 (with Bank Marketing Data Set)">
+  <meta name="twitter:description" content="Objective">
+  <meta name="twitter:image" content="craftsangjae.github.io/assets/logo.png">
+  <meta name="twitter:url" content="craftsangjae.github.io/deep-learning/2020/06/03/%EC%B9%B4%ED%85%8C%EA%B3%A0%EB%A6%AC%ED%98%95(%EB%AA%85%EB%AA%A9%ED%98%95)-%EB%B3%80%EC%88%98%EB%A5%BC-%EA%B0%80%EC%A7%84-%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A5%BC-%EB%94%A5%EB%9F%AC%EB%8B%9D%EC%9C%BC%EB%A1%9C-%ED%92%80%EC%96%B4%EB%B3%B4%EC%9E%90-(with-Bank-Marketing-Data-Set).html">
+  
+
+  
+
+  
+    <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    TeX: {
+      equationNumbers: {
+        autoNumber: "AMS"
+      }
+    },
+    tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$'] ],
+    processEscapes: true,
+  }
+});
+MathJax.Hub.Register.MessageHook("Math Processing Error",function (message) {
+	  alert("Math Processing Error: "+message[1]);
+	});
+MathJax.Hub.Register.MessageHook("TeX Jax - parse error",function (message) {
+	  alert("Math Processing Error: "+message[1]);
+	});
+</script>
+<script type="text/javascript" async
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+  
+
+
+  <!-- Site styles -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="craftsangjae.github.io/deep-learning/2020/06/03/%EC%B9%B4%ED%85%8C%EA%B3%A0%EB%A6%AC%ED%98%95(%EB%AA%85%EB%AA%A9%ED%98%95)-%EB%B3%80%EC%88%98%EB%A5%BC-%EA%B0%80%EC%A7%84-%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A5%BC-%EB%94%A5%EB%9F%AC%EB%8B%9D%EC%9C%BC%EB%A1%9C-%ED%92%80%EC%96%B4%EB%B3%B4%EC%9E%90-(with-Bank-Marketing-Data-Set).html">
+	<link rel="alternate" type="application/rss+xml" title="개발 공방" href="craftsangjae.github.io/feed.xml" />
+	
+	<!-- Tooltips -->
+	<script type="text/javascript">
+		window.tooltips = []
+	</script>
+  <style type="text/css">
+  .input_area div.highlighter-rouge {
+    background-color: #263238  !important;
+  }
+
+  div.highlighter-rouge, figure.highlight {
+    /*font-size: 0.675em  !important;*/
+  }
+
+  .output_stream, .output_data_text, .output_traceback_line {
+    margin-left: 3% !important;
+    border: none !important;
+    border-radius: 4px !important;
+    background-color: #fafafa !important;
+    box-shadow: none !important;
+    color: #000000  !important;
+    /*font-size: 0.6em !important;*/
+  }
+
+  .output_stream:before, .output_data_text:before, .output_traceback_line:before{
+    content: none !important;
+  }
+
+  table.dataframe {
+      background-color: #fafafa;
+      width: 100%;
+      max-height: 240px;
+      display: block;
+      overflow: auto;
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+      line-height: 20px;
+      text-align: center;
+  }
+  table.dataframe th {
+    font-weight: bold;
+    padding: 4px;
+  }
+  table.dataframe td {
+    padding: 4px;
+  }
+  table.dataframe tr:hover {
+    background: #b8d1f3;
+  }
+
+  </style>
+  
+</head>
+
+
+  <body>
+
+    <header class="navigation" role="banner">
+  <div class="navigation-wrapper">
+    <a href="/" class="logo">
+      
+      <img src="/assets/logo.png" alt="개발 공방">
+      
+    </a>
+    <a href="javascript:void(0)" class="navigation-menu-button" id="js-mobile-menu">
+      <i class="fa fa-bars"></i>
+    </a>
+    <nav role="navigation">
+      <ul id="js-navigation-menu" class="navigation-menu show">
+				
+	
+	<li class="nav-link"><a href="/about/">About</a>
+	
+
+	
+
+	
+
+	
+	<li class="nav-link"><a href="/posts/">Posts</a>
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+      </ul>
+    </nav>
+  </div>
+</header>
+
+
+    <div class="page-content">
+        <div class="post">
+
+<div class="post-header-container " >
+  <div class="scrim ">
+    <header class="post-header">
+      <h1 class="title">카테고리형(명목형) 변수를 가진 데이터를 딥러닝으로 풀어보자 (with Bank Marketing Data Set)</h1>
+      <p class="info">by <strong>sangjae kang</strong></p>
+    </header>
+  </div>
+</div>
+
+<div class="wrapper">
+
+ <span class="page-divider">
+  <span class="one"></span>
+  <span class="two"></span>
+</span>
+ 
+
+<section class="post-meta">
+  <div class="post-date">June 3, 2020</div>
+  <div class="post-categories">
+  in 
+    
+    <a href="/category/deep-learning">Deep-learning</a>
+    
+  
+  </div>
+</section>
+
+<article class="post-content">
+  <h2 id="objective">Objective</h2>
+
+<p>많은 캐글대회나 머신러닝 예제들을 보면, 카테고리형(명목형) 변수를 가진 데이터는 대체로 Decision Tree 계통의 모형으로 해결합니다. 하지만 딥러닝도 Decision Tree 만큼이나 효과적으로 카테고리형(명목형) 변수를 우수하게 처리할 수 있습니다. <a href="https://archive.ics.uci.edu/ml/datasets.php">UCI</a>에서 카테고리형 변수에 대한 데이터셋인 은행 정기예금 가입 데이터를 통해 살펴보도록 하겠습니다.</p>
+
+<p><img src="https://imgur.com/RTV6hAo.png" alt="" /></p>
+
+<h3 id="패키지-가져오기">패키지 가져오기</h3>
+
+<p>Tensorflow 2 버전으로 작성되어 있습니다.</p>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="n">tf</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</code></pre></div>  </div>
+
+</div>
+
+<h2 id="데이터-톺아보기">데이터 톺아보기</h2>
+
+<h3 id="데이터-가져오기">데이터 가져오기</h3>
+
+<p><a href="https://archive.ics.uci.edu/ml/datasets/Bank%2BMarketing">ucl - bank marketing data set</a>에서 제공됩니다. 동일한 데이터를 구글 드라이브에 올려두어서, 아래와 같이 간단히 다운받을 수 있습니다.</p>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">tensorflow.keras.utils</span> <span class="kn">import</span> <span class="n">get_file</span>
+
+<span class="n">fpath</span> <span class="o">=</span> <span class="n">get_file</span><span class="p">(</span><span class="s">"bank-full.csv"</span><span class="p">,</span>
+                 <span class="s">"https://docs.google.com/uc?id=16Z2Jyg9BPB8kLeuGDRNLpXZdF77W32_p"</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s">';'</span><span class="p">)</span>
+</code></pre></div>  </div>
+
+</div>
+
+<h3 id="데이터-파악하기">데이터 파악하기</h3>
+
+<p>고객의 여러 정보들을 통해, 해당 고객이 장기 예금에 가입할 것인지($y$)를 예측하는 문제입니다. 총 45211건의 데이터가 존재하고, 입력 변수는 총 16개로 명목형 변수와 수치형 변수가 섞여 있습니다.</p>
+
+<ul>
+  <li>명목형 변수 : job, marital, education, default, housing, loan, contact, month, poutcome</li>
+  <li>수치형 변수 : age, balance, day, duration, campaign, pdays, previous</li>
+</ul>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">print</span><span class="p">(</span><span class="s">"데이터의 크기 : {df.shape}"</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div>  </div>
+
+</div>
+
+<p>Output :</p>
+
+<div class="output_stream highlighter-rouge"><div class="highlight"><pre class="highlight"><code>데이터의 크기 : {df.shape}
+
+</code></pre></div></div>
+
+<div>
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>age</th>
+      <th>job</th>
+      <th>marital</th>
+      <th>education</th>
+      <th>default</th>
+      <th>balance</th>
+      <th>housing</th>
+      <th>loan</th>
+      <th>contact</th>
+      <th>day</th>
+      <th>month</th>
+      <th>duration</th>
+      <th>campaign</th>
+      <th>pdays</th>
+      <th>previous</th>
+      <th>poutcome</th>
+      <th>y</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>58</td>
+      <td>management</td>
+      <td>married</td>
+      <td>tertiary</td>
+      <td>no</td>
+      <td>2143</td>
+      <td>yes</td>
+      <td>no</td>
+      <td>unknown</td>
+      <td>5</td>
+      <td>may</td>
+      <td>261</td>
+      <td>1</td>
+      <td>-1</td>
+      <td>0</td>
+      <td>unknown</td>
+      <td>no</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>44</td>
+      <td>technician</td>
+      <td>single</td>
+      <td>secondary</td>
+      <td>no</td>
+      <td>29</td>
+      <td>yes</td>
+      <td>no</td>
+      <td>unknown</td>
+      <td>5</td>
+      <td>may</td>
+      <td>151</td>
+      <td>1</td>
+      <td>-1</td>
+      <td>0</td>
+      <td>unknown</td>
+      <td>no</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>33</td>
+      <td>entrepreneur</td>
+      <td>married</td>
+      <td>secondary</td>
+      <td>no</td>
+      <td>2</td>
+      <td>yes</td>
+      <td>yes</td>
+      <td>unknown</td>
+      <td>5</td>
+      <td>may</td>
+      <td>76</td>
+      <td>1</td>
+      <td>-1</td>
+      <td>0</td>
+      <td>unknown</td>
+      <td>no</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>47</td>
+      <td>blue-collar</td>
+      <td>married</td>
+      <td>unknown</td>
+      <td>no</td>
+      <td>1506</td>
+      <td>yes</td>
+      <td>no</td>
+      <td>unknown</td>
+      <td>5</td>
+      <td>may</td>
+      <td>92</td>
+      <td>1</td>
+      <td>-1</td>
+      <td>0</td>
+      <td>unknown</td>
+      <td>no</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>33</td>
+      <td>unknown</td>
+      <td>single</td>
+      <td>unknown</td>
+      <td>no</td>
+      <td>1</td>
+      <td>no</td>
+      <td>no</td>
+      <td>unknown</td>
+      <td>5</td>
+      <td>may</td>
+      <td>198</td>
+      <td>1</td>
+      <td>-1</td>
+      <td>0</td>
+      <td>unknown</td>
+      <td>no</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+<h4 id="명목형-변수">명목형 변수</h4>
+
+<p>총 9개의 명목형 변수가 존재하고, 각 변수 별로 아래와 같은 값들이 존재합니다.</p>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cat_col_names</span> <span class="o">=</span> <span class="p">[</span><span class="s">"marital"</span><span class="p">,</span><span class="s">'job'</span><span class="p">,</span><span class="s">'contact'</span><span class="p">,</span><span class="s">'education'</span><span class="p">,</span><span class="s">'month'</span><span class="p">,</span><span class="s">"poutcome"</span><span class="p">,</span><span class="s">"housing"</span><span class="p">,</span><span class="s">"loan"</span><span class="p">,</span><span class="s">'default'</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">col_name</span> <span class="ow">in</span> <span class="n">cat_col_names</span><span class="p">:</span>
+    <span class="n">cat_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">col_name</span><span class="p">])</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">"{col_name}: {cat_values}</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+</code></pre></div>  </div>
+
+</div>
+
+<p>Output :</p>
+
+<div class="output_stream highlighter-rouge"><div class="highlight"><pre class="highlight"><code>marital: ['divorced' 'married' 'single']
+
+job: ['admin.' 'blue-collar' 'entrepreneur' 'housemaid' 'management' 'retired'
+ 'self-employed' 'services' 'student' 'technician' 'unemployed' 'unknown']
+
+contact: ['cellular' 'telephone' 'unknown']
+
+education: ['primary' 'secondary' 'tertiary' 'unknown']
+
+month: ['apr' 'aug' 'dec' 'feb' 'jan' 'jul' 'jun' 'mar' 'may' 'nov' 'oct' 'sep']
+
+poutcome: ['failure' 'other' 'success' 'unknown']
+
+housing: ['no' 'yes']
+
+loan: ['no' 'yes']
+
+default: ['no' 'yes']
+
+
+</code></pre></div></div>
+
+<h4 id="수치형-변수">수치형 변수</h4>
+
+<p>총 7개의 수치형 변수가 존재하고, 값의 범위는 아래와 같습니다.</p>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">num_col_names</span> <span class="o">=</span> <span class="p">[</span><span class="s">'age'</span><span class="p">,</span> <span class="s">'balance'</span><span class="p">,</span> <span class="s">'day'</span><span class="p">,</span> <span class="s">'duration'</span><span class="p">,</span>
+                 <span class="s">'campaign'</span><span class="p">,</span><span class="s">'pdays'</span><span class="p">,</span> <span class="s">'previous'</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">col_name</span> <span class="ow">in</span> <span class="n">num_col_names</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">"{col_name}: ({df[col_name].min()},{df[col_name].max()})"</span><span class="p">)</span>
+</code></pre></div>  </div>
+
+</div>
+
+<p>Output :</p>
+
+<div class="output_stream highlighter-rouge"><div class="highlight"><pre class="highlight"><code>age: (18,95)
+balance: (-8019,102127)
+day: (1,31)
+duration: (0,4918)
+campaign: (1,63)
+pdays: (-1,871)
+previous: (0,275)
+
+</code></pre></div></div>
+
+<h3 id="데이터-변환하기">데이터 변환하기</h3>
+
+<p>딥러닝 모형에 넣기 전에 우선 데이터들을 전처리해주어야 합니다. 명목형 변수는 인덱스로 변환하는 Label Encoder를 적용하고, 수치형 변수는 정규분포로 변환하는 StandardScaler를 적용합니다.</p>
+
+<h4 id="명목형-변수-변환하기">명목형 변수 변환하기</h4>
+
+<p>각 변수 별로 각각 LabelEncoder을 선언하여 적용해 줍니다. 라벨인코더는 각 명목형 변수의 값을 대응하는 인덱스(숫자)에 맵핑시켜주는 전처리 클래스입니다.</p>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">LabelEncoder</span>
+
+<span class="n">category_xs</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">category_encoders</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">col_name</span> <span class="ow">in</span> <span class="n">cat_col_names</span><span class="p">:</span>
+    <span class="n">encoder</span> <span class="o">=</span> <span class="n">LabelEncoder</span><span class="p">()</span>
+    <span class="n">encoded_xs</span> <span class="o">=</span> <span class="n">encoder</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">col_name</span><span class="p">])</span>
+
+    <span class="n">category_xs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">encoded_xs</span><span class="p">)</span>
+    <span class="n">category_encoders</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">encoder</span><span class="p">)</span>
+
+<span class="n">category_xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">category_xs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> 
+<span class="n">category_xs</span>
+</code></pre></div>  </div>
+
+</div>
+
+<p>Output :</p>
+
+<div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>array([[1, 4, 2, ..., 1, 0, 0],
+       [2, 9, 2, ..., 1, 0, 0],
+       [1, 2, 2, ..., 1, 1, 0],
+       ...,
+       [1, 5, 0, ..., 0, 0, 0],
+       [1, 1, 1, ..., 0, 0, 0],
+       [1, 2, 0, ..., 0, 0, 0]])
+</code></pre></div></div>
+
+<h4 id="수치형-변수-변환하기">수치형 변수 변환하기</h4>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">StandardScaler</span>
+
+<span class="n">numeric_encoder</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span>
+<span class="n">numeric_xs</span> <span class="o">=</span> <span class="n">numeric_encoder</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">num_col_names</span><span class="p">])</span>
+<span class="n">numeric_xs</span>
+</code></pre></div>  </div>
+
+</div>
+
+<p>Output :</p>
+
+<div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>array([[ 1.607,  0.256, -1.298, ..., -0.569, -0.411, -0.252],
+       [ 0.289, -0.438, -1.298, ..., -0.569, -0.411, -0.252],
+       [-0.747, -0.447, -1.298, ..., -0.569, -0.411, -0.252],
+       ...,
+       [ 2.925,  1.43 ,  0.143, ...,  0.722,  1.436,  1.05 ],
+       [ 1.513, -0.228,  0.143, ...,  0.399, -0.411, -0.252],
+       [-0.371,  0.528,  0.143, ..., -0.247,  1.476,  4.524]])
+</code></pre></div></div>
+
+<h4 id="타깃-변수y-변환하기">타깃 변수($y$) 변환하기</h4>
+
+<p>가입할지에 대한 Binary Classification 문제입니다. 가입할 경우 True, 가입하지 않은 경우 False로 학습합니다.</p>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ys</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="nb">map</span><span class="p">({</span><span class="s">'yes'</span><span class="p">:</span><span class="bp">True</span><span class="p">,</span><span class="s">'no'</span><span class="p">:</span><span class="bp">False</span><span class="p">})</span><span class="o">.</span><span class="n">values</span>
+<span class="n">ys</span>
+</code></pre></div>  </div>
+
+</div>
+
+<p>Output :</p>
+
+<div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>array([False, False, False, ...,  True, False, False])
+</code></pre></div></div>
+
+<h3 id="학습데이터와-평가데이터-나누기">학습데이터와 평가데이터 나누기</h3>
+
+<p>성능을 평가하기 위해 학습데이터와 평가데이터를 나눕니다. 이때 라벨의 True/False의 비율이 다르기 때문에, startify를 통해 train/test 내 라벨의 비율을 동일하게 맞춰줍니다.</p>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+
+<span class="n">splitted</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">category_xs</span><span class="p">,</span> <span class="n">numeric_xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> 
+                            <span class="n">test_size</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span><span class="n">stratify</span><span class="o">=</span><span class="n">ys</span><span class="p">)</span>
+
+<span class="n">train_category_xs</span><span class="p">,</span> <span class="n">train_numeric_xs</span><span class="p">,</span> <span class="n">train_ys</span> <span class="o">=</span> <span class="n">splitted</span><span class="p">[::</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">test_category_xs</span><span class="p">,</span> <span class="n">test_numeric_xs</span><span class="p">,</span> <span class="n">test_ys</span> <span class="o">=</span> <span class="n">splitted</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]</span>
+</code></pre></div>  </div>
+
+</div>
+
+<h2 id="카테고리형-변수를-처리하는-딥러닝-모형-만들기">카테고리형 변수를 처리하는 딥러닝 모형 만들기</h2>
+
+<h4 id="모델의-입력값-구성하기">모델의 입력값 구성하기</h4>
+
+<p>모델의 입력값은 명목형 입력값과 수치형 입력값으로 나뉘어져 있습니다. 카테고리형 입력값은 위에서 인덱스, 즉 정수형 값으로 바꾸어 두었고, 수치형 입력값은 실수형 값을 가지고 있습니다.</p>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">tensorflow.keras.layers</span> <span class="kn">import</span> <span class="n">Input</span>
+
+<span class="n">category_inputs</span> <span class="o">=</span> <span class="n">Input</span><span class="p">((</span><span class="mi">9</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+<span class="n">numeric_inputs</span> <span class="o">=</span> <span class="n">Input</span><span class="p">((</span><span class="mi">7</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+</code></pre></div>  </div>
+
+</div>
+
+<h4 id="명목형-입력값을-임베딩하기">명목형 입력값을 임베딩하기</h4>
+
+<p>머신러닝에서 임베딩이란, <strong>모형이 다룰 수 있는 숫자 벡터로 바꾸어주는 작업</strong>을 의미합니다. LabelEncoder로 바꾼 인덱스는 사실 연산을 바로 적용하기에는 부적절합니다. 인덱스(0,1,2,3,..,)으로 이루어진 이 값들은 인덱스 간 크기의 대소에 아무런 의미가 없기 때문입니다. 모형이 다루기 위해서는 적절한 숫자 벡터로 바꾸어 주어야 하는데, 이러한 작업을 통칭해 임베딩이라고 부릅니다.</p>
+
+<p>딥러닝에서는 별도의 Embedding Layer을 제공합니다. 각 인덱스에 대응하는 임베딩 벡터를 반환합니다. 해당 임베딩 벡터는 모형의 학습 과정 중에서 적절한 값으로 바뀌어갑니다.</p>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">tensorflow.keras.layers</span> <span class="kn">import</span> <span class="n">Embedding</span>
+
+<span class="c1"># 변수 별 임베딩 크기
+</span><span class="n">embed_size</span> <span class="o">=</span> <span class="mi">4</span>
+
+<span class="n">embeds</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">col_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cat_col_names</span><span class="p">):</span>
+    <span class="c1"># 각 변수 별 카테고리의 갯수
+</span>    <span class="n">category_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">category_encoders</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">classes_</span><span class="p">)</span>
+    
+    <span class="c1"># 각 변수 별로 임베딩 레이어 적용 (-&gt; 각 변수 내 카테고리별로 임베딩 값들이 모델에서 학습)
+</span>    <span class="n">category_embeded</span> <span class="o">=</span> <span class="n">Embedding</span><span class="p">(</span>
+        <span class="n">category_size</span><span class="p">,</span> <span class="n">embed_size</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">col_name</span><span class="o">+</span><span class="s">'_embed'</span><span class="p">)(</span><span class="n">category_inputs</span><span class="p">[:,</span><span class="n">idx</span><span class="p">])</span>
+    
+    <span class="n">embeds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">category_embeded</span><span class="p">)</span>
+<span class="n">embeds</span>    
+</code></pre></div>  </div>
+
+</div>
+
+<p>Output :</p>
+
+<div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[&lt;tf.Tensor 'marital_embed/Identity:0' shape=(None, 4) dtype=float32&gt;,
+ &lt;tf.Tensor 'job_embed/Identity:0' shape=(None, 4) dtype=float32&gt;,
+ &lt;tf.Tensor 'contact_embed/Identity:0' shape=(None, 4) dtype=float32&gt;,
+ &lt;tf.Tensor 'education_embed/Identity:0' shape=(None, 4) dtype=float32&gt;,
+ &lt;tf.Tensor 'month_embed/Identity:0' shape=(None, 4) dtype=float32&gt;,
+ &lt;tf.Tensor 'poutcome_embed/Identity:0' shape=(None, 4) dtype=float32&gt;,
+ &lt;tf.Tensor 'housing_embed/Identity:0' shape=(None, 4) dtype=float32&gt;,
+ &lt;tf.Tensor 'loan_embed/Identity:0' shape=(None, 4) dtype=float32&gt;,
+ &lt;tf.Tensor 'default_embed/Identity:0' shape=(None, 4) dtype=float32&gt;]
+</code></pre></div></div>
+
+<h4 id="명목형-변수와-수치형-변수-합치기">명목형 변수와 수치형 변수 합치기</h4>
+
+<p>위와 같이 임베딩된 명목형 변수는 수치형 변수와 같이 연산에 적절한 벡터로 바뀌어져 있습니다. 수치형 변수와 이제 합치도록 하겠습니다.</p>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">tensorflow.keras.layers</span> <span class="kn">import</span> <span class="n">Concatenate</span>
+
+<span class="n">inputs_list</span> <span class="o">=</span> <span class="n">embeds</span> <span class="o">+</span> <span class="p">[</span><span class="n">numeric_inputs</span><span class="p">]</span>
+<span class="n">concats</span> <span class="o">=</span> <span class="n">Concatenate</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'embed_concat'</span><span class="p">)(</span><span class="n">inputs_list</span><span class="p">)</span>
+<span class="n">concats</span>
+</code></pre></div>  </div>
+
+</div>
+
+<p>Output :</p>
+
+<div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;tf.Tensor 'embed_concat/Identity:0' shape=(None, 43) dtype=float32&gt;
+</code></pre></div></div>
+
+<h4 id="딥러닝-모형-구성하기">딥러닝 모형 구성하기</h4>
+
+<p>3층 신경망으로 구성하도록 하겠습니다. Overfitting을 방지하기 위해, L2 정규화와 Dropout Layer을 추가하였습니다.</p>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">tensorflow.keras.layers</span> <span class="kn">import</span> <span class="n">Dense</span>
+<span class="kn">from</span> <span class="nn">tensorflow.keras.layers</span> <span class="kn">import</span> <span class="n">Dropout</span>
+<span class="kn">from</span> <span class="nn">tensorflow.keras.regularizers</span> <span class="kn">import</span> <span class="n">l2</span>
+<span class="kn">from</span> <span class="nn">tensorflow.keras.models</span> <span class="kn">import</span> <span class="n">Model</span>
+
+<span class="n">hidden</span> <span class="o">=</span> <span class="n">Dense</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span><span class="n">activation</span><span class="o">=</span><span class="s">'relu'</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">'hidden1'</span><span class="p">,</span>
+               <span class="n">kernel_regularizer</span><span class="o">=</span><span class="n">l2</span><span class="p">(</span><span class="mf">1e-5</span><span class="p">))(</span><span class="n">concats</span><span class="p">)</span>
+<span class="n">hidden</span> <span class="o">=</span> <span class="n">Dropout</span><span class="p">(</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">'dropout1'</span><span class="p">)(</span><span class="n">hidden</span><span class="p">)</span>
+<span class="n">hidden</span> <span class="o">=</span> <span class="n">Dense</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span><span class="n">activation</span><span class="o">=</span><span class="s">'relu'</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">'hidden2'</span><span class="p">,</span>
+               <span class="n">kernel_regularizer</span><span class="o">=</span><span class="n">l2</span><span class="p">(</span><span class="mf">1e-5</span><span class="p">))(</span><span class="n">hidden</span><span class="p">)</span>
+<span class="n">hidden</span> <span class="o">=</span> <span class="n">Dropout</span><span class="p">(</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">'dropout2'</span><span class="p">)(</span><span class="n">hidden</span><span class="p">)</span>
+<span class="n">output</span> <span class="o">=</span> <span class="n">Dense</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s">'sigmoid'</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">'output'</span><span class="p">,</span>
+               <span class="n">kernel_regularizer</span><span class="o">=</span><span class="n">l2</span><span class="p">(</span><span class="mf">1e-5</span><span class="p">))(</span><span class="n">hidden</span><span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">([</span><span class="n">category_inputs</span><span class="p">,</span> <span class="n">numeric_inputs</span><span class="p">],</span> <span class="n">output</span><span class="p">)</span>
+</code></pre></div>  </div>
+
+</div>
+
+<h4 id="모델-학습시키기">모델 학습시키기</h4>
+
+<p>모형의 손실함수와 옵티마이저를 설정한 후, 데이터를 통해 모델을 학습시켜 보도록 하겠습니다.</p>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">tensorflow.keras.optimizers</span> <span class="kn">import</span> <span class="n">Adagrad</span>
+<span class="kn">from</span> <span class="nn">tensorflow.keras.losses</span> <span class="kn">import</span> <span class="n">BinaryCrossentropy</span>
+<span class="kn">from</span> <span class="nn">tensorflow.keras.metrics</span> <span class="kn">import</span> <span class="n">BinaryAccuracy</span>
+
+<span class="n">model</span><span class="o">.</span><span class="nb">compile</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="n">Adagrad</span><span class="p">(</span><span class="mf">1e-2</span><span class="p">),</span>
+              <span class="n">loss</span><span class="o">=</span><span class="n">BinaryCrossentropy</span><span class="p">(),</span>
+              <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="n">BinaryAccuracy</span><span class="p">()])</span>
+
+<span class="n">train_xs</span> <span class="o">=</span> <span class="p">[</span><span class="n">train_category_xs</span><span class="p">,</span><span class="n">train_numeric_xs</span><span class="p">]</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">train_xs</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">train_ys</span><span class="p">,</span>
+          <span class="n">batch_size</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> 
+          <span class="n">validation_split</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">);</span>
+</code></pre></div>  </div>
+
+</div>
+
+<h4 id="모델-평가하기">모델 평가하기</h4>
+
+<p>테스트 데이터를 통해 모형의 정확도를 산출해보도록 하겠습니다.</p>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">loss</span><span class="p">,</span> <span class="n">acc</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="p">[</span><span class="n">test_category_xs</span><span class="p">,</span> <span class="n">test_numeric_xs</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">test_ys</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">"딥러닝 모형의 정확도 : {acc:.3</span><span class="si">%</span><span class="s">}"</span><span class="p">)</span>
+</code></pre></div>  </div>
+
+</div>
+
+<p>Output :</p>
+
+<div class="output_stream highlighter-rouge"><div class="highlight"><pre class="highlight"><code>딥러닝 모형의 정확도 : 90.513%
+
+</code></pre></div></div>
+
+<h3 id="cf-random-forest-모형과-비교해보기">c.f) Random Forest 모형과 비교해보기</h3>
+
+<p>대표적인 Decision Tree 모형인 RandomForest로도 데이터를 동일하게 두고 학습시킨 결과입니다. 복잡하지 않은 단순한 형태의 딥러닝 만으로도 충분히 RandomForest와 비슷하게 성능이 나옵니다.</p>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">RandomForestClassifier</span>
+
+<span class="n">rf_clf</span> <span class="o">=</span> <span class="n">RandomForestClassifier</span><span class="p">()</span>
+
+<span class="c1"># 모형 학습시키기
+</span><span class="n">train_xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">train_category_xs</span><span class="p">,</span><span class="n">train_numeric_xs</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">rf_clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_xs</span><span class="p">,</span> <span class="n">train_ys</span><span class="p">)</span>
+
+<span class="c1"># 모형 평가하기 
+</span><span class="n">test_xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">test_category_xs</span><span class="p">,</span><span class="n">test_numeric_xs</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">rf_clf</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">test_xs</span><span class="p">,</span> <span class="n">test_ys</span><span class="p">)</span>
+</code></pre></div>  </div>
+
+</div>
+
+<p>Output :</p>
+
+<div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>0.9053516143299425
+</code></pre></div></div>
+
+
+</article>
+
+
+
+<section class="tags">
+  <strong>Tags:</strong> <a href="/tag/practice">practice</a>
+</section>
+
+
+
+<section class="rss">
+  <p class="rss-subscribe text"><strong>Subscribe <a href="/feed.xml">via RSS</a></strong></p>
+</section>
+
+<section class="share">
+  <span>Share: </span>
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+      <a href="//www.pinterest.com/pin/create/button/?description=%EC%B9%B4%ED%85%8C%EA%B3%A0%EB%A6%AC%ED%98%95%28%EB%AA%85%EB%AA%A9%ED%98%95%29+%EB%B3%80%EC%88%98%EB%A5%BC+%EA%B0%80%EC%A7%84+%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A5%BC+%EB%94%A5%EB%9F%AC%EB%8B%9D%EC%9C%BC%EB%A1%9C+%ED%92%80%EC%96%B4%EB%B3%B4%EC%9E%90+%28with+Bank+Marketing+Data+Set%29&url=craftsangjae.github.io%2Fdeep-learning%2F2020%2F06%2F03%2F%25EC%25B9%25B4%25ED%2585%258C%25EA%25B3%25A0%25EB%25A6%25AC%25ED%2598%2595%28%25EB%25AA%2585%25EB%25AA%25A9%25ED%2598%2595%29-%25EB%25B3%2580%25EC%2588%2598%25EB%25A5%25BC-%25EA%25B0%2580%25EC%25A7%2584-%25EB%258D%25B0%25EC%259D%25B4%25ED%2584%25B0%25EB%25A5%25BC-%25EB%2594%25A5%25EB%259F%25AC%25EB%258B%259D%25EC%259C%25BC%25EB%25A1%259C-%25ED%2592%2580%25EC%2596%25B4%25EB%25B3%25B4%25EC%259E%2590-%28with-Bank-Marketing-Data-Set%29.html&media=craftsangjae.github.io/assets/header_image.jpg"
+        onclick="window.open(this.href, 'pinterest-share', 'width=550,height=255');return false;">
+        <i class="fa fa-pinterest-square fa-lg"></i>
+      </a>
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+</section>
+
+	<section class="post-navigation">
+		<span class="prev-post">
+			
+				<a href="/deep-learning/2020/06/02/keras-%EB%BD%80%EA%B0%9C%EA%B8%B0-(3)-%EB%AA%A8%ED%98%95-%ED%95%99%EC%8A%B5%EC%8B%9C%ED%82%A4%EA%B8%B0.html">
+					<span class="fa-stack fa-lg">
+						<i class="fa fa-square fa-stack-2x"></i>
+						<i class="fa fa-angle-double-left fa-stack-1x fa-inverse"></i>
+					</span>
+					<span class="page-number">keras 뽀개기 (3) 모형 학습시키기</span>
+				</a>
+			
+		</span>
+		<span class="next-post">
+			
+				<a href="/machine-learning/2020/06/04/AB-%ED%85%8C%EC%8A%A4%ED%8C%85%EC%9D%84-%ED%9A%A8%EA%B3%BC%EC%A0%81%EC%9C%BC%EB%A1%9C-%ED%95%98%EB%8A%94-%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98,-%ED%86%B0%EC%8A%A8-%EC%83%98%ED%94%8C%EB%A7%81.html">
+					<span class="page-number">AB 테스팅을 효과적으로 하는 알고리즘, 톰슨 샘플링</span>
+					<span class="fa-stack fa-lg">
+						<i class="fa fa-square fa-stack-2x"></i>
+						<i class="fa fa-angle-double-right fa-stack-1x fa-inverse"></i>
+					</span>
+				</a>
+			
+		</span>
+	</section>
+
+
+
+
+<section class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_shortname = 'craftsangjae';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+
+</div>
+</div>
+
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <h3 class="footer-heading">개발 공방</h3>
+
+    <div class="site-navigation">
+
+      <p><strong>Site Map</strong></p>
+      <ul class="pages">
+				
+	
+	<li class="nav-link"><a href="/about/">About</a>
+	
+
+	
+
+	
+
+	
+	<li class="nav-link"><a href="/posts/">Posts</a>
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+      </ul>
+    </div>
+
+    <div class="site-contact">
+
+      <p><strong>Contact</strong></p>
+      <ul class="social-media-list">
+        <li>
+          <a href="mailto:craftsangjae@gmail.com">
+            <i class="fa fa-envelope-o"></i>
+            <span class="username">craftsangjae@gmail.com</span>
+          </a>
+        </li>
+
+        
+          
+        
+          
+        
+          
+          <li>
+            <a href="https://github.com/craftsangjae" title="Fork me on GitHub">
+              <i class="fa fa-github"></i>
+              <span class="username">craftsangjae</span>
+            </a>
+          </li>
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+
+      </ul>
+    </div>
+
+    <div class="site-signature">
+      <p class="rss-subscribe text"><strong>Subscribe <a href="/feed.xml">via RSS</a></strong></p>
+      <p class="text">Data Engineer with Deep Learning
+</p>
+    </div>
+
+  </div>
+
+</footer>
+
+<!-- Scripts -->
+<script src="//code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.1/js/lightbox.min.js"></script>
+<script src="//unpkg.com/popper.js@1"></script>
+<script src="//unpkg.com/tippy.js@5"></script>
+
+<script type="text/javascript">
+$(document).ready(function() {
+  // Default syntax highlighting
+  hljs.initHighlightingOnLoad();
+
+  // Header
+  var menuToggle = $('#js-mobile-menu').unbind();
+  $('#js-navigation-menu').removeClass("show");
+  menuToggle.on('click', function(e) {
+    e.preventDefault();
+    $('#js-navigation-menu').slideToggle(function(){
+      if($('#js-navigation-menu').is(':hidden')) {
+        $('#js-navigation-menu').removeAttr('style');
+      }
+    });
+  });
+
+	// Enable tooltips via Tippy.js
+	if (Array.isArray(window.tooltips)) {
+		window.tooltips.forEach(function(tooltip) {
+			var selector = tooltip[0];
+			var config = tooltip[1];
+			tippy(selector, config);
+		})
+	}
+});
+
+</script>
+
+
+
+
+<!-- Google Analytics -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-167872800-1', 'auto');
+  ga('send', 'pageview', {
+    'page': '/deep-learning/2020/06/03/%EC%B9%B4%ED%85%8C%EA%B3%A0%EB%A6%AC%ED%98%95(%EB%AA%85%EB%AA%A9%ED%98%95)-%EB%B3%80%EC%88%98%EB%A5%BC-%EA%B0%80%EC%A7%84-%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A5%BC-%EB%94%A5%EB%9F%AC%EB%8B%9D%EC%9C%BC%EB%A1%9C-%ED%92%80%EC%96%B4%EB%B3%B4%EC%9E%90-(with-Bank-Marketing-Data-Set).html',
+    'title': '카테고리형(명목형) 변수를 가진 데이터를 딥러닝으로 풀어보자 (with Bank Marketing Data Set)'
+  });
+</script>
+
+
+
+  </body>
+
+</html>

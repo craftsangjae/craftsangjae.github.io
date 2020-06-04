@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>keras 뽀개기 (1) Layer란?</title>
+  <meta name="description" content="딥러닝에서 모델은 레이어(Layer) 으로 구성합니다. 입력층, 은닉층, 출력층을 순서에 맞게 연결하여 하나의 모형을 구성합니다. keras도 똑같이 레이어(Layer)을 기준으로 모델을 작성합니다. keras의 레이어를 하나씩 뜯어보며 어떻게 동작하는지를 파악해보도록 하겠습니다.">
+  
+  <meta name="author" content="SangJae Kang">
+  <meta name="copyright" content="&copy; SangJae Kang 2020">
+  
+
+  <!-- External libraries -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/github.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/css/lightbox.css">
+
+  <!-- Favicon and other icons (made with http://www.favicon-generator.org/) -->
+  <link rel="shortcut icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" sizes="57x57" href="/assets/icons/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/assets/icons/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/assets/icons/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/assets/icons/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/assets/icons/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/assets/icons/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/assets/icons/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/assets/icons/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192"  href="/assets/icons/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/icons/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16.png">
+  <link rel="manifest" href="/assets/icons/manifest.json">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="/assets/icons/ms-icon-144x144.png">
+  <meta name="theme-color" content="#ffffff">
+
+  
+  <!-- Facebook OGP cards -->
+  <meta property="og:description" content="딥러닝에서 모델은 레이어(Layer) 으로 구성합니다. 입력층, 은닉층, 출력층을 순서에 맞게 연결하여 하나의 모형을 구성합니다. keras도 똑같이 레이어(Layer)을 기준으로 모델을 작성합니다. keras의 레이어를 하나씩 뜯어보며 어떻게 동작하는지를 파악해보도록 하겠습니다." />
+  <meta property="og:url" content="craftsangjae.github.io/deep-learning/2020/06/01/keras-%EB%BD%80%EA%B0%9C%EA%B8%B0-(1)-Layer%EB%9E%80.html">
+  <meta property="og:site_name" content="개발 공방" />
+  <meta property="og:title" content="keras 뽀개기 (1) Layer란?" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="craftsangjae.github.io/assets/logo.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="612" />
+  <meta property="og:image:height" content="605" />
+  
+
+  
+  <!-- Twitter: card tags -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="keras 뽀개기 (1) Layer란?">
+  <meta name="twitter:description" content="딥러닝에서 모델은 레이어(Layer) 으로 구성합니다. 입력층, 은닉층, 출력층을 순서에 맞게 연결하여 하나의 모형을 구성합니다. keras도 똑같이 레이어(Layer)을 기준으로 모델을 작성합니다. keras의 레이어를 하나씩 뜯어보며 어떻게 동작하는지를 파악해보도록 하겠습니다.">
+  <meta name="twitter:image" content="craftsangjae.github.io/assets/logo.png">
+  <meta name="twitter:url" content="craftsangjae.github.io/deep-learning/2020/06/01/keras-%EB%BD%80%EA%B0%9C%EA%B8%B0-(1)-Layer%EB%9E%80.html">
+  
+
+  
+
+  
+    <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    TeX: {
+      equationNumbers: {
+        autoNumber: "AMS"
+      }
+    },
+    tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$'] ],
+    processEscapes: true,
+  }
+});
+MathJax.Hub.Register.MessageHook("Math Processing Error",function (message) {
+	  alert("Math Processing Error: "+message[1]);
+	});
+MathJax.Hub.Register.MessageHook("TeX Jax - parse error",function (message) {
+	  alert("Math Processing Error: "+message[1]);
+	});
+</script>
+<script type="text/javascript" async
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+  
+
+
+  <!-- Site styles -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="craftsangjae.github.io/deep-learning/2020/06/01/keras-%EB%BD%80%EA%B0%9C%EA%B8%B0-(1)-Layer%EB%9E%80.html">
+	<link rel="alternate" type="application/rss+xml" title="개발 공방" href="craftsangjae.github.io/feed.xml" />
+	
+	<!-- Tooltips -->
+	<script type="text/javascript">
+		window.tooltips = []
+	</script>
+  <style type="text/css">
+  .input_area div.highlighter-rouge {
+    background-color: #263238  !important;
+  }
+
+  div.highlighter-rouge, figure.highlight {
+    /*font-size: 0.675em  !important;*/
+  }
+
+  .output_stream, .output_data_text, .output_traceback_line {
+    margin-left: 3% !important;
+    border: none !important;
+    border-radius: 4px !important;
+    background-color: #fafafa !important;
+    box-shadow: none !important;
+    color: #000000  !important;
+    /*font-size: 0.6em !important;*/
+  }
+
+  .output_stream:before, .output_data_text:before, .output_traceback_line:before{
+    content: none !important;
+  }
+
+  table.dataframe {
+      background-color: #fafafa;
+      width: 100%;
+      max-height: 240px;
+      display: block;
+      overflow: auto;
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+      line-height: 20px;
+      text-align: center;
+  }
+  table.dataframe th {
+    font-weight: bold;
+    padding: 4px;
+  }
+  table.dataframe td {
+    padding: 4px;
+  }
+  table.dataframe tr:hover {
+    background: #b8d1f3;
+  }
+
+  </style>
+  
+</head>
+
+
+  <body>
+
+    <header class="navigation" role="banner">
+  <div class="navigation-wrapper">
+    <a href="/" class="logo">
+      
+      <img src="/assets/logo.png" alt="개발 공방">
+      
+    </a>
+    <a href="javascript:void(0)" class="navigation-menu-button" id="js-mobile-menu">
+      <i class="fa fa-bars"></i>
+    </a>
+    <nav role="navigation">
+      <ul id="js-navigation-menu" class="navigation-menu show">
+				
+	
+	<li class="nav-link"><a href="/about/">About</a>
+	
+
+	
+
+	
+
+	
+	<li class="nav-link"><a href="/posts/">Posts</a>
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+      </ul>
+    </nav>
+  </div>
+</header>
+
+
+    <div class="page-content">
+        <div class="post">
+
+<div class="post-header-container " >
+  <div class="scrim ">
+    <header class="post-header">
+      <h1 class="title">keras 뽀개기 (1) Layer란?</h1>
+      <p class="info">by <strong>sangjae kang</strong></p>
+    </header>
+  </div>
+</div>
+
+<div class="wrapper">
+
+ <span class="page-divider">
+  <span class="one"></span>
+  <span class="two"></span>
+</span>
+ 
+
+<section class="post-meta">
+  <div class="post-date">June 1, 2020</div>
+  <div class="post-categories">
+  in 
+    
+    <a href="/category/deep-learning">Deep-learning</a>
+    
+  
+  </div>
+</section>
+
+<article class="post-content">
+  <p>딥러닝에서 모델은 <strong>레이어(Layer)</strong> 으로 구성합니다. 입력층, 은닉층, 출력층을 순서에 맞게 연결하여 하나의 모형을 구성합니다. keras도 똑같이 레이어(Layer)을 기준으로 모델을 작성합니다. keras의 레이어를 하나씩 뜯어보며 어떻게 동작하는지를 파악해보도록 하겠습니다.</p>
+
+<h2 id="keras의-레이어란">keras의 레이어란</h2>
+
+<p>딥러닝 모형은 <strong>레이어</strong>으로 이루어져 있습니다. 대표적인 딥러닝 모형으로 VGG-Net을 살펴봅시다. VGG-Net은 영상 분류 모형으로, 영상을 입력으로 받아 어떤 라벨인지 맞추는 모형입니다. 해당 모형은 3가지의 레이어(합성곱 레이어, 풀링 레이어, 완전연결 레이어)의 조합으로 이루어져 있습니다.</p>
+
+<p><img src="https://imgur.com/Fwnxull.png" alt="" /></p>
+
+<p>VGG 내의 3가지 레이어는 각기 다른 역할을 수행합니다. 합성곱 레이어는 영상의 국소 패턴을 추출하고 학습하고, 풀링 레이어는 영상의 크기를 줄여 연산량을 줄여주고, 완전연결 레이어는 국소패턴의 조합으로 출력값을 결정하는 역할을 수행합니다. 딥러닝 모형을 구성하는 것은 각 단계에 맞게 알맞게 레이어를 배치하고 연결하는 행위에 불과합니다.</p>
+
+<h3 id="layer-생성하기">Layer 생성하기</h3>
+
+<p>딥러닝에서 많이 쓰이는 대부분의 레이어들은 이미 keras에서 제공해주고 있습니다. <code class="highlighter-rouge">tensorflow.kears.layers</code> 내에 여러가지 레이어가 존재합니다. 보통 아래와 같이 레이어를 가져옵니다.</p>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">tensorflow.keras.layers</span> <span class="kn">import</span> <span class="n">Dense</span>
+
+<span class="n">hidden_layer</span> <span class="o">=</span> <span class="n">Dense</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s">'relu'</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">'hidden'</span><span class="p">)</span>
+</code></pre></div>  </div>
+
+</div>
+
+<p>위와 같이 생성된 레이어는 하나의 <strong>함수</strong>처럼 동작합니다. 레이어는 <code class="highlighter-rouge">np.ndarray</code> 혹은 <code class="highlighter-rouge">tf.Tensor</code>를 받아 내부 가중치와 함께 연산 후 결과를 반환합니다.</p>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="n">tf</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]],</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">hidden_layer</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</code></pre></div>  </div>
+
+</div>
+
+<p>해당 레이어의 내 가중치는 <code class="highlighter-rouge">.weights</code>를 통해 가져올 수 있습니다. 가중치 행렬은 텐서플로우의 변수인 variable로 구성되어 있습니다. 해당 가중치 행렬은 모델의 학습 과정 중에서 갱신합니다.</p>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">W_h</span><span class="p">,</span> <span class="n">b_h</span> <span class="o">=</span> <span class="n">hidden_layer</span><span class="o">.</span><span class="n">weights</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s">"가중치의 타입 : "</span><span class="p">,</span><span class="nb">type</span><span class="p">(</span><span class="n">W_h</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">"W : {W_h.numpy()}"</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">"b : {b_h.numpy()}"</span><span class="p">)</span>
+</code></pre></div>  </div>
+
+</div>
+
+<p>Output :</p>
+
+<div class="output_stream highlighter-rouge"><div class="highlight"><pre class="highlight"><code>가중치의 타입 :  &lt;class 'tensorflow.python.ops.resource_variable_ops.ResourceVariable'&gt;
+W : [[ 0.20305085  0.7421051  -0.632295  ]
+ [ 0.56531084  0.65862584  0.28286374]]
+b : [0. 0. 0.]
+
+</code></pre></div></div>
+
+<p><code class="highlighter-rouge">hidden_layer</code>에서의 연산은 내부에서는 아래처럼 작동합니다. 이러한 연산들은 <code class="highlighter-rouge">conv</code>, <code class="highlighter-rouge">rnn</code>, <code class="highlighter-rouge">pool</code>, <code class="highlighter-rouge">dense</code> 등 어떤 레이어이냐에 따라 결정됩니다.</p>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="n">x</span> <span class="o">@</span> <span class="n">W_h</span> <span class="o">+</span> <span class="n">b_h</span><span class="p">)</span>
+</code></pre></div>  </div>
+
+</div>
+
+<p>Output :</p>
+
+<div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;tf.Tensor: shape=(1, 3), dtype=float32, numpy=array([[1.3336725, 2.0593567, 0.       ]], dtype=float32)&gt;
+</code></pre></div></div>
+
+<h3 id="layer-내-가중치-생성하기">Layer 내 가중치 생성하기</h3>
+
+<p><code class="highlighter-rouge">output_layer</code>을 생성한 후 바로 가중치를 확인해봅시다.</p>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">output_layer</span> <span class="o">=</span> <span class="n">Dense</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s">'sigmoid'</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">'output'</span><span class="p">)</span>
+<span class="n">output_layer</span><span class="o">.</span><span class="n">weights</span>
+</code></pre></div>  </div>
+
+</div>
+
+<p>Output :</p>
+
+<div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[]
+</code></pre></div></div>
+
+<p>빈 리스트, 즉 가중치가 없다고 나옵니다. 가중치의 크기는 입력의 크기를 알아야 비로소 결정할 수 있는데, 아직 입력의 크기가 어떻게 될지 정해지지 않았기 때문에 가중치가 생성되지 않았습니다. 그래서 입력값의 크기에 따라 가중치를 만드는 메소드로 <code class="highlighter-rouge">.build(input_shape)</code>가 존재합니다.</p>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">output_layer</span><span class="o">.</span><span class="n">build</span><span class="p">((</span><span class="bp">None</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span> <span class="c1"># input의 크기 : (None, 3)
+</span>
+<span class="n">W_o</span><span class="p">,</span> <span class="n">b_o</span> <span class="o">=</span> <span class="n">output_layer</span><span class="o">.</span><span class="n">weights</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">"W_o : {W_o.numpy()}"</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">"b_o : {b_o.numpy()}"</span><span class="p">)</span>
+</code></pre></div>  </div>
+
+</div>
+
+<p>Output :</p>
+
+<div class="output_stream highlighter-rouge"><div class="highlight"><pre class="highlight"><code>W_o : [[-0.53498465]
+ [ 0.75595737]
+ [ 0.9117445 ]]
+b_o : [0.]
+
+</code></pre></div></div>
+
+<p>입력값의 크기를 커지면 가중치의 크기도 커집니다.</p>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">output_layer</span><span class="o">.</span><span class="n">build</span><span class="p">((</span><span class="bp">None</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span> <span class="c1"># input의 크기 : (None, 3)
+</span>
+<span class="n">W_o</span><span class="p">,</span> <span class="n">b_o</span> <span class="o">=</span> <span class="n">output_layer</span><span class="o">.</span><span class="n">weights</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">"W_o : {W_o.numpy()}"</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">"b_o : {b_o.numpy()}"</span><span class="p">)</span>
+</code></pre></div>  </div>
+
+</div>
+
+<p>Output :</p>
+
+<div class="output_stream highlighter-rouge"><div class="highlight"><pre class="highlight"><code>W_o : [[-0.17793965]
+ [-0.33839726]
+ [ 0.35208154]
+ [-0.99778676]
+ [-0.97931933]]
+b_o : [0.]
+
+</code></pre></div></div>
+
+<p>그런데 보통 이런 <code class="highlighter-rouge">build(input_shape)</code>를 통해 가중치를 정해주기 보다, 첫번째 연산 시의 입력값 형태에 맞춰서 가중치를 초기화하는 방법을 택합니다. 우리가 처음에 <code class="highlighter-rouge">hidden_layer</code>의 가중치를 초기화시켰을 때처럼, 처음 값을 넣으면 자동으로 그 크기에 맞춰 가중치의 크기가 결정됩니다.</p>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">output_layer</span> <span class="o">=</span> <span class="n">Dense</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s">'sigmoid'</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">'output'</span><span class="p">)</span>
+
+<span class="c1"># call 호출 전
+</span><span class="k">print</span><span class="p">(</span><span class="s">"Before call : "</span><span class="p">,</span> <span class="n">output_layer</span><span class="o">.</span><span class="n">weights</span><span class="p">)</span>
+
+<span class="c1"># (1,3)짜리 입력 행렬을 넣기
+</span><span class="n">x</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">]],</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">output_layer</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s">"After call : "</span><span class="p">,</span> <span class="n">output_layer</span><span class="o">.</span><span class="n">weights</span><span class="p">)</span>
+</code></pre></div>  </div>
+
+</div>
+
+<p>Output :</p>
+
+<div class="output_stream highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Before call :  []
+After call :  [&lt;tf.Variable 'output/kernel:0' shape=(3, 1) dtype=float32, numpy=
+array([[ 0.76937807],
+       [-1.1589382 ],
+       [-0.1949104 ]], dtype=float32)&gt;, &lt;tf.Variable 'output/bias:0' shape=(1,) dtype=float32, numpy=array([0.], dtype=float32)&gt;]
+
+</code></pre></div></div>
+
+<h3 id="layer을-통해-연산하기">Layer을 통해 연산하기</h3>
+
+<p>아래와 같이 입력값이 존재한다고 해봅시다.</p>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">inputs</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">([[</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.5</span><span class="p">],</span>
+                      <span class="p">[</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.6</span><span class="p">],</span>
+                      <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span><span class="o">-</span><span class="mf">.3</span><span class="p">]],</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+</code></pre></div>  </div>
+
+</div>
+
+<p>그리고 현재 우리의 모형은 아래와 같은 2층 신경망이라고 해봅시다. 우리가 구성해야 하는 레이어는 은닉층과 출력층입니다. (입력층은 사실 데이터에 불과하죠)</p>
+
+<p><img src="https://imgur.com/CBgGgkb.png" width="200" /></p>
+
+<p>아래와 같이 레이어를 선언할 수 있습니다.</p>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">hidden_layer</span> <span class="o">=</span> <span class="n">Dense</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s">'relu'</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">'hidden'</span><span class="p">)</span>
+<span class="n">output_layer</span> <span class="o">=</span> <span class="n">Dense</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s">'sigmoid'</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">'output'</span><span class="p">)</span>
+</code></pre></div>  </div>
+
+</div>
+
+<p>입력값을 따라 출력값까지 가져가는 순전파 과정은 Keras를 통해 할 수 있습니다.</p>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">x</span> <span class="o">=</span> <span class="n">hidden_layer</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">output_layer</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">x</span> <span class="c1">#  순전파 결과 
+</span></code></pre></div>  </div>
+
+</div>
+
+<p>Output :</p>
+
+<div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;tf.Tensor: shape=(3, 1), dtype=float32, numpy=
+array([[0.5636625 ],
+       [0.58186775],
+       [0.5       ]], dtype=float32)&gt;
+</code></pre></div></div>
+
+<h3 id="layer-내-가중치를-학습시키기">layer 내 가중치를 학습시키기</h3>
+
+<p>딥러닝에서 가중치를 학습시키기 위해서 쓰는 방법은 주로 <strong>경사하강법</strong>입니다.</p>
+
+<script type="math/tex; mode=display">\mbox{[경사하강법]  }
+W := W - \alpha \frac{\partial L}{\partial W}</script>
+
+<p>그리고 경사하강법을 적용하기 위해 필요한 기울기 정보($\frac{\partial L}{\partial W}$)는 역전파를 통해 구할 수 있습니다. tf2.0 버전부터는 <code class="highlighter-rouge">tf.GradientTape()</code>를 통해 역전파를 수행합니다.</p>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">y_true</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">([[</span><span class="mf">1.</span><span class="p">],[</span><span class="mf">0.</span><span class="p">],[</span><span class="mf">1.</span><span class="p">]],</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="c1"># 정답 Label
+</span>
+<span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">GradientTape</span><span class="p">()</span> <span class="k">as</span> <span class="n">tape</span><span class="p">:</span>
+    <span class="c1"># 순전파 과정
+</span>    <span class="n">z</span> <span class="o">=</span> <span class="n">hidden_layer</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">output_layer</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>    
+    
+    <span class="c1"># 손실함수
+</span>    <span class="n">loss</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">binary_crossentropy</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+</code></pre></div>  </div>
+
+</div>
+
+<p>현재 가중치는 은닉층의 가중치와 출력층의 가중치로 구성되어 있습니다.</p>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 모든 가중치 가져오기
+</span><span class="n">weights</span> <span class="o">=</span> <span class="n">hidden_layer</span><span class="o">.</span><span class="n">weights</span> <span class="o">+</span> <span class="n">output_layer</span><span class="o">.</span><span class="n">weights</span>
+<span class="n">weights</span>
+</code></pre></div>  </div>
+
+</div>
+
+<p>Output :</p>
+
+<div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[&lt;tf.Variable 'hidden/kernel:0' shape=(2, 3) dtype=float32, numpy=
+ array([[0.6056124 , 0.33235526, 0.6926162 ],
+        [0.80040526, 0.7977326 , 0.40226436]], dtype=float32)&gt;,
+ &lt;tf.Variable 'hidden/bias:0' shape=(3,) dtype=float32, numpy=array([0., 0., 0.], dtype=float32)&gt;,
+ &lt;tf.Variable 'output/kernel:0' shape=(3, 1) dtype=float32, numpy=
+ array([[-0.9937019],
+        [ 0.9570366],
+        [ 0.9678527]], dtype=float32)&gt;,
+ &lt;tf.Variable 'output/bias:0' shape=(1,) dtype=float32, numpy=array([0.], dtype=float32)&gt;]
+</code></pre></div></div>
+
+<p>위와 같이 순전파 과정을 <code class="highlighter-rouge">tf.GradientTape()</code>으로 감싸줌으로써 텐서플로우 내부에서는 중간 연산과정들이 메모리에 저장됩니다. 해당 정보를 바탕으로 우리는 연산을 진행할 수 있습니다.</p>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 가중치의 기울기 계산하기 (역전파)
+</span><span class="n">grads</span> <span class="o">=</span> <span class="n">tape</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span> <span class="n">weights</span><span class="p">)</span>
+
+<span class="c1"># 경사하강법 적용하기
+</span><span class="n">lr</span> <span class="o">=</span> <span class="mf">1e-1</span>
+<span class="k">for</span> <span class="n">weight</span><span class="p">,</span> <span class="n">grad</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">grads</span><span class="p">):</span>
+    <span class="n">weight</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">weight</span> <span class="o">-</span> <span class="n">lr</span><span class="o">*</span><span class="n">grad</span><span class="p">)</span>
+</code></pre></div>  </div>
+
+</div>
+
+<p>데이터에 따라 모형 내 Weight들이 갱신되었다는 것을 아래를 통해 확인할 수 있습니다.</p>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 위의 weight 출력값과 값이 다름 -&gt; 값이 갱신되었음을 의미
+</span><span class="n">weights</span>
+</code></pre></div>  </div>
+
+</div>
+
+<p>Output :</p>
+
+<div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[&lt;tf.Variable 'hidden/kernel:0' shape=(2, 3) dtype=float32, numpy=
+ array([[0.6142867 , 0.324001  , 0.68416756],
+        [0.813418  , 0.7852    , 0.38959014]], dtype=float32)&gt;,
+ &lt;tf.Variable 'hidden/bias:0' shape=(3,) dtype=float32, numpy=array([ 0.01446136, -0.01392777, -0.01408518], dtype=float32)&gt;,
+ &lt;tf.Variable 'output/kernel:0' shape=(3, 1) dtype=float32, numpy=
+ array([[-1.0094699],
+        [ 0.9436889],
+        [ 0.9565389]], dtype=float32)&gt;,
+ &lt;tf.Variable 'output/bias:0' shape=(1,) dtype=float32, numpy=array([0.03544697], dtype=float32)&gt;]
+</code></pre></div></div>
+
+<h3 id="layer의-hyper-parameter-가져오기">Layer의 Hyper Parameter 가져오기</h3>
+
+<p>층의 구조 및 형태는 사람이 설계합니다. 예를 들어 unit 수, activation의 종류, bias의 유무가 바로 사람이 설계해야 하는 요소, Hyper-Parameter입니다. 레이어의 해당 정보를 가져오기 위해서는 <code class="highlighter-rouge">layer.get_config()</code>를 이용하면 됩니다.</p>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">hidden_layer</span><span class="o">.</span><span class="n">get_config</span><span class="p">()</span>
+</code></pre></div>  </div>
+
+</div>
+
+<p>Output :</p>
+
+<div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{'name': 'hidden',
+ 'trainable': True,
+ 'dtype': 'float32',
+ 'units': 3,
+ 'activation': 'relu',
+ 'use_bias': True,
+ 'kernel_initializer': {'class_name': 'GlorotUniform',
+  'config': {'seed': None}},
+ 'bias_initializer': {'class_name': 'Zeros', 'config': {}},
+ 'kernel_regularizer': None,
+ 'bias_regularizer': None,
+ 'activity_regularizer': None,
+ 'kernel_constraint': None,
+ 'bias_constraint': None}
+</code></pre></div></div>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">output_layer</span><span class="o">.</span><span class="n">get_config</span><span class="p">()</span>
+</code></pre></div>  </div>
+
+</div>
+
+<p>Output :</p>
+
+<div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{'name': 'output',
+ 'trainable': True,
+ 'dtype': 'float32',
+ 'units': 1,
+ 'activation': 'sigmoid',
+ 'use_bias': True,
+ 'kernel_initializer': {'class_name': 'GlorotUniform',
+  'config': {'seed': None}},
+ 'bias_initializer': {'class_name': 'Zeros', 'config': {}},
+ 'kernel_regularizer': None,
+ 'bias_regularizer': None,
+ 'activity_regularizer': None,
+ 'kernel_constraint': None,
+ 'bias_constraint': None}
+</code></pre></div></div>
+
+<h3 id="custom-layer-나만의-연산층-구성하기">Custom Layer, 나만의 연산층 구성하기</h3>
+
+<p>딥러닝 레이어를 구성하기 위해서는</p>
+
+<ul>
+  <li><code class="highlighter-rouge">.call()</code> : 어떤 연산을 수행할 것인가</li>
+  <li><code class="highlighter-rouge">.build()</code> : 어떤 가중치로 구성할 것인가</li>
+</ul>
+
+<p>가 정의되어야 합니다. 레이어를 저장하기 위해서는 <code class="highlighter-rouge">get_config()</code>도 아래와 같이 구성해주어야 합니다. 해당 레이어의 hyper-parameter 정보를 <code class="highlighter-rouge">get_config()</code>에 담아주어야 json 파일로 변경할 때 올바르게 저장이 됩니다.</p>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">tensorflow.keras.layers</span> <span class="kn">import</span> <span class="n">Layer</span>
+
+<span class="k">class</span> <span class="nc">MyLayer</span><span class="p">(</span><span class="n">Layer</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_units</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_units</span> <span class="o">=</span> <span class="n">num_units</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        
+    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">):</span>
+        <span class="c1"># 가중치를 정의
+</span>        <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_weight</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">input_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">num_units</span><span class="p">),</span>
+                                 <span class="n">name</span><span class="o">=</span><span class="s">'kernel'</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_weight</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_units</span><span class="p">,),</span>
+                                 <span class="n">initializer</span><span class="o">=</span><span class="s">'zeros'</span><span class="p">,</span>
+                                 <span class="n">name</span><span class="o">=</span><span class="s">'bias'</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">input_shape</span><span class="p">)</span>
+        
+    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">):</span>
+        <span class="c1"># 연산을 정의
+</span>        <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="n">inputs</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">)</span> 
+    
+    <span class="k">def</span> <span class="nf">get_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># hyper parameter를 정의
+</span>        <span class="n">config</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_config</span><span class="p">()</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+            <span class="s">'num_units'</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">num_units</span>
+        <span class="p">})</span>
+        <span class="k">return</span> <span class="n">config</span>
+</code></pre></div>  </div>
+
+</div>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">my_dense_layer</span> <span class="o">=</span> <span class="n">MyLayer</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">([[</span><span class="mf">1.</span><span class="p">,</span><span class="mf">2.</span><span class="p">,</span><span class="mf">3.</span><span class="p">]],</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="n">my_dense_layer</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</code></pre></div>  </div>
+
+</div>
+
+<p>Output :</p>
+
+<div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;tf.Tensor: shape=(1, 5), dtype=float32, numpy=
+array([[0.       , 0.       , 0.7449781, 1.3720498, 0.       ]],
+      dtype=float32)&gt;
+</code></pre></div></div>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">my_dense_layer</span><span class="o">.</span><span class="n">get_config</span><span class="p">()</span>
+</code></pre></div>  </div>
+
+</div>
+
+<p>Output :</p>
+
+<div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{'name': 'my_layer', 'trainable': True, 'dtype': 'float32', 'num_units': 5}
+</code></pre></div></div>
+
+<h2 id="마무리">마무리</h2>
+
+<p>케라스는 레이어 단위로 구조화합니다. 텐서플로우 1.x버전에서는 연산과 가중치를 별개로 나누어서 작성했기 때문에 자유도가 매우 높았지만, 복잡한 모형을 만들 때 코드가 매우 복잡해지는 문제를 야기했습니다. 케라스에서는 레이어 단위로 연산과 가중치를 묶어 관리하기 때문에, 상대적으로 자유도는 좀 줄었지만 훨씬 더 간결하게 모형을 작성할 수 있습니다.</p>
+
+</article>
+
+
+
+<section class="tags">
+  <strong>Tags:</strong> <a href="/tag/tensorflow">tensorflow</a>
+</section>
+
+
+
+<section class="rss">
+  <p class="rss-subscribe text"><strong>Subscribe <a href="/feed.xml">via RSS</a></strong></p>
+</section>
+
+<section class="share">
+  <span>Share: </span>
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+      <a href="//www.pinterest.com/pin/create/button/?description=keras+%EB%BD%80%EA%B0%9C%EA%B8%B0+%281%29+Layer%EB%9E%80%3F&url=craftsangjae.github.io%2Fdeep-learning%2F2020%2F06%2F01%2Fkeras-%25EB%25BD%2580%25EA%25B0%259C%25EA%25B8%25B0-%281%29-Layer%25EB%259E%2580.html&media=craftsangjae.github.io/assets/header_image.jpg"
+        onclick="window.open(this.href, 'pinterest-share', 'width=550,height=255');return false;">
+        <i class="fa fa-pinterest-square fa-lg"></i>
+      </a>
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+</section>
+
+	<section class="post-navigation">
+		<span class="prev-post">
+			
+		</span>
+		<span class="next-post">
+			
+				<a href="/deep-learning/2020/06/01/Keras-%EB%BD%80%EA%B0%9C%EA%B8%B0-(2)-%EB%AA%A8%ED%98%95%EC%9D%84-%EA%B5%AC%EC%84%B1%ED%95%98%EA%B8%B0,-Model.html">
+					<span class="page-number">keras 뽀개기 (2) 모형을 구성하기, Model</span>
+					<span class="fa-stack fa-lg">
+						<i class="fa fa-square fa-stack-2x"></i>
+						<i class="fa fa-angle-double-right fa-stack-1x fa-inverse"></i>
+					</span>
+				</a>
+			
+		</span>
+	</section>
+
+
+
+
+<section class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_shortname = 'craftsangjae';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+
+</div>
+</div>
+
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <h3 class="footer-heading">개발 공방</h3>
+
+    <div class="site-navigation">
+
+      <p><strong>Site Map</strong></p>
+      <ul class="pages">
+				
+	
+	<li class="nav-link"><a href="/about/">About</a>
+	
+
+	
+
+	
+
+	
+	<li class="nav-link"><a href="/posts/">Posts</a>
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+      </ul>
+    </div>
+
+    <div class="site-contact">
+
+      <p><strong>Contact</strong></p>
+      <ul class="social-media-list">
+        <li>
+          <a href="mailto:craftsangjae@gmail.com">
+            <i class="fa fa-envelope-o"></i>
+            <span class="username">craftsangjae@gmail.com</span>
+          </a>
+        </li>
+
+        
+          
+        
+          
+        
+          
+          <li>
+            <a href="https://github.com/craftsangjae" title="Fork me on GitHub">
+              <i class="fa fa-github"></i>
+              <span class="username">craftsangjae</span>
+            </a>
+          </li>
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+
+      </ul>
+    </div>
+
+    <div class="site-signature">
+      <p class="rss-subscribe text"><strong>Subscribe <a href="/feed.xml">via RSS</a></strong></p>
+      <p class="text">Data Engineer with Deep Learning
+</p>
+    </div>
+
+  </div>
+
+</footer>
+
+<!-- Scripts -->
+<script src="//code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.1/js/lightbox.min.js"></script>
+<script src="//unpkg.com/popper.js@1"></script>
+<script src="//unpkg.com/tippy.js@5"></script>
+
+<script type="text/javascript">
+$(document).ready(function() {
+  // Default syntax highlighting
+  hljs.initHighlightingOnLoad();
+
+  // Header
+  var menuToggle = $('#js-mobile-menu').unbind();
+  $('#js-navigation-menu').removeClass("show");
+  menuToggle.on('click', function(e) {
+    e.preventDefault();
+    $('#js-navigation-menu').slideToggle(function(){
+      if($('#js-navigation-menu').is(':hidden')) {
+        $('#js-navigation-menu').removeAttr('style');
+      }
+    });
+  });
+
+	// Enable tooltips via Tippy.js
+	if (Array.isArray(window.tooltips)) {
+		window.tooltips.forEach(function(tooltip) {
+			var selector = tooltip[0];
+			var config = tooltip[1];
+			tippy(selector, config);
+		})
+	}
+});
+
+</script>
+
+
+
+
+<!-- Google Analytics -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-167872800-1', 'auto');
+  ga('send', 'pageview', {
+    'page': '/deep-learning/2020/06/01/keras-%EB%BD%80%EA%B0%9C%EA%B8%B0-(1)-Layer%EB%9E%80.html',
+    'title': 'keras 뽀개기 (1) Layer란?'
+  });
+</script>
+
+
+
+  </body>
+
+</html>

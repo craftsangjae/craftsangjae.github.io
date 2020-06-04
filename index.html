@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>개발 공방</title>
+  <meta name="description" content="Data Engineer with Deep Learning
+">
+  
+  <meta name="author" content="SangJae Kang">
+  <meta name="copyright" content="&copy; SangJae Kang 2020">
+  
+
+  <!-- External libraries -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/github.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/css/lightbox.css">
+
+  <!-- Favicon and other icons (made with http://www.favicon-generator.org/) -->
+  <link rel="shortcut icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" sizes="57x57" href="/assets/icons/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/assets/icons/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/assets/icons/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/assets/icons/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/assets/icons/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/assets/icons/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/assets/icons/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/assets/icons/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192"  href="/assets/icons/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/icons/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16.png">
+  <link rel="manifest" href="/assets/icons/manifest.json">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="/assets/icons/ms-icon-144x144.png">
+  <meta name="theme-color" content="#ffffff">
+
+  
+  <!-- Facebook OGP cards -->
+  <meta property="og:description" content="Data Engineer with Deep Learning
+" />
+  <meta property="og:url" content="craftsangjae.github.io/index.html">
+  <meta property="og:site_name" content="개발 공방" />
+  <meta property="og:title" content="개발 공방" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="craftsangjae.github.io/assets/logo.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="612" />
+  <meta property="og:image:height" content="605" />
+  
+
+  
+  <!-- Twitter: card tags -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="개발 공방">
+  <meta name="twitter:description" content="Data Engineer with Deep Learning
+">
+  <meta name="twitter:image" content="craftsangjae.github.io/assets/logo.png">
+  <meta name="twitter:url" content="craftsangjae.github.io/index.html">
+  
+
+  
+
+  
+
+
+  <!-- Site styles -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="craftsangjae.github.io/">
+	<link rel="alternate" type="application/rss+xml" title="개발 공방" href="craftsangjae.github.io/feed.xml" />
+	
+	<!-- Tooltips -->
+	<script type="text/javascript">
+		window.tooltips = []
+	</script>
+  <style type="text/css">
+  .input_area div.highlighter-rouge {
+    background-color: #263238  !important;
+  }
+
+  div.highlighter-rouge, figure.highlight {
+    /*font-size: 0.675em  !important;*/
+  }
+
+  .output_stream, .output_data_text, .output_traceback_line {
+    margin-left: 3% !important;
+    border: none !important;
+    border-radius: 4px !important;
+    background-color: #fafafa !important;
+    box-shadow: none !important;
+    color: #000000  !important;
+    /*font-size: 0.6em !important;*/
+  }
+
+  .output_stream:before, .output_data_text:before, .output_traceback_line:before{
+    content: none !important;
+  }
+
+  table.dataframe {
+      background-color: #fafafa;
+      width: 100%;
+      max-height: 240px;
+      display: block;
+      overflow: auto;
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+      line-height: 20px;
+      text-align: center;
+  }
+  table.dataframe th {
+    font-weight: bold;
+    padding: 4px;
+  }
+  table.dataframe td {
+    padding: 4px;
+  }
+  table.dataframe tr:hover {
+    background: #b8d1f3;
+  }
+
+  </style>
+  
+</head>
+
+
+  <body>
+
+    <header class="navigation" role="banner">
+  <div class="navigation-wrapper">
+    <a href="/" class="logo">
+      
+      <img src="/assets/logo.png" alt="개발 공방">
+      
+    </a>
+    <a href="javascript:void(0)" class="navigation-menu-button" id="js-mobile-menu">
+      <i class="fa fa-bars"></i>
+    </a>
+    <nav role="navigation">
+      <ul id="js-navigation-menu" class="navigation-menu show">
+				
+	
+	<li class="nav-link"><a href="/about/">About</a>
+	
+
+	
+
+	
+
+	
+	<li class="nav-link"><a href="/posts/">Posts</a>
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+      </ul>
+    </nav>
+  </div>
+</header>
+
+
+    <div class="page-content">
+        <div class="home">
+
+<div class="site-header-container has-cover" style="background-image: url(/assets/header_image.jpg);">
+  <div class="scrim has-cover">
+    <header class="site-header">
+      <h1 class="title">개발 공방</h1>
+      <p class="subtitle">계속 하다 보면 장인이 되겠지</p>
+    </header>
+  </div>
+</div>
+
+<div class="wrapper">
+<ul class="post-list">
+  
+  <li>
+    <h2>
+      <a class="post-link" href="/machine-learning/2020/06/04/AB-%ED%85%8C%EC%8A%A4%ED%8C%85%EC%9D%84-%ED%9A%A8%EA%B3%BC%EC%A0%81%EC%9C%BC%EB%A1%9C-%ED%95%98%EB%8A%94-%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98,-%ED%86%B0%EC%8A%A8-%EC%83%98%ED%94%8C%EB%A7%81.html">AB 테스팅을 효과적으로 하는 알고리즘, 톰슨 샘플링</a>
+    </h2>
+    <section class="post-excerpt" itemprop="description">
+      <p>Objective 우리가 아이폰 11을 팔아야 하는 마케터라고 상상해봅시다. 아이폰 11에 대한 랜딩 페이지를 기획하는 중에 있습니다. 팀원들과 토의하는 중, 아래와 같이 총 3개의 제품 스틸컷이 나왔습니다. 이 3개 중에서 하나를 골라야 하는데, 도대체 어떤 이미지가 고객들이 가장 좋아할 만한 이미지인지 선택하기 어렵습니다. 우리는 어떤 식으로 제품 스틸컷을 골라야 할까요? A/B...</p>
+    </section>
+    <section class="post-meta">
+      <div class="post-date">June 4, 2020</div>
+      <div class="post-categories">
+      in 
+        
+        <a href="/category/machine-learning">Machine-learning</a>
+        
+      
+      </div>
+    </section>
+  </li>
+  
+  <hr>
+  
+  
+  <li>
+    <h2>
+      <a class="post-link" href="/deep-learning/2020/06/03/%EC%B9%B4%ED%85%8C%EA%B3%A0%EB%A6%AC%ED%98%95(%EB%AA%85%EB%AA%A9%ED%98%95)-%EB%B3%80%EC%88%98%EB%A5%BC-%EA%B0%80%EC%A7%84-%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A5%BC-%EB%94%A5%EB%9F%AC%EB%8B%9D%EC%9C%BC%EB%A1%9C-%ED%92%80%EC%96%B4%EB%B3%B4%EC%9E%90-(with-Bank-Marketing-Data-Set).html">카테고리형(명목형) 변수를 가진 데이터를 딥러닝으로 풀어보자 (with Bank Marketing Data Set)</a>
+    </h2>
+    <section class="post-excerpt" itemprop="description">
+      <p>Objective 많은 캐글대회나 머신러닝 예제들을 보면, 카테고리형(명목형) 변수를 가진 데이터는 대체로 Decision Tree 계통의 모형으로 해결합니다. 하지만 딥러닝도 Decision Tree 만큼이나 효과적으로 카테고리형(명목형) 변수를 우수하게 처리할 수 있습니다. UCI에서 카테고리형 변수에 대한 데이터셋인 은행 정기예금 가입 데이터를 통해 살펴보도록 하겠습니다. 패키지 가져오기 Tensorflow 2 버전으로 작성되어 있습니다. import numpy as...</p>
+    </section>
+    <section class="post-meta">
+      <div class="post-date">June 3, 2020</div>
+      <div class="post-categories">
+      in 
+        
+        <a href="/category/deep-learning">Deep-learning</a>
+        
+      
+      </div>
+    </section>
+  </li>
+  
+  <hr>
+  
+  
+  <li>
+    <h2>
+      <a class="post-link" href="/deep-learning/2020/06/02/keras-%EB%BD%80%EA%B0%9C%EA%B8%B0-(3)-%EB%AA%A8%ED%98%95-%ED%95%99%EC%8A%B5%EC%8B%9C%ED%82%A4%EA%B8%B0.html">keras 뽀개기 (3) 모형 학습시키기</a>
+    </h2>
+    <section class="post-excerpt" itemprop="description">
+      <p>keras에서의 모델 학습은 model.fit으로 high-level API로 이루어집니다. 모델의 손실함수와 옵티마이저를 지정하고, 데이터를 넣으면 데이터에 맞게 모형의 가중치를 갱신합니다. 무척 편하지만, 어떻게 돌아가는지를 알지 못하면 튜닝하기도 어렵습니다. 간단한 예시로 한번 살펴보도록 하겠습니다. MNIST 코드 후다닥 작성하기 데이터 불러오기 from tensorflow.keras.datasets.mnist import load_data (x_train, y_train), (x_test, y_test) = load_data() print("train image shape...</p>
+    </section>
+    <section class="post-meta">
+      <div class="post-date">June 2, 2020</div>
+      <div class="post-categories">
+      in 
+        
+        <a href="/category/deep-learning">Deep-learning</a>
+        
+      
+      </div>
+    </section>
+  </li>
+  
+  <hr>
+  
+  
+  <li>
+    <h2>
+      <a class="post-link" href="/deep-learning/2020/06/01/Keras-%EB%BD%80%EA%B0%9C%EA%B8%B0-(2)-%EB%AA%A8%ED%98%95%EC%9D%84-%EA%B5%AC%EC%84%B1%ED%95%98%EA%B8%B0,-Model.html">keras 뽀개기 (2) 모형을 구성하기, Model</a>
+    </h2>
+    <section class="post-excerpt" itemprop="description">
+      <p>keras는 레이어 단위로 연산하고 가중치를 관리합니다. 딥러닝은 수십~수백개의 레이어로 이루어져 있기 때문에, 이를 일괄적으로 관리하는 툴이 필요합니다. 그것이 바로 Keras의 Model입니다. Keras의 Model 딥러닝 모형은 일종의 함수입니다. 특정한 입력값을 받아서 여러 층의 레이어를 거친 후에 출력값을 생성하죠. 딥러닝 개발자들은 주로 위와 같이 Graph 형태로 자신의 모형을 표현합니다. 모형을 생성하기 위해서는...</p>
+    </section>
+    <section class="post-meta">
+      <div class="post-date">June 1, 2020</div>
+      <div class="post-categories">
+      in 
+        
+        <a href="/category/deep-learning">Deep-learning</a>
+        
+      
+      </div>
+    </section>
+  </li>
+  
+  <hr>
+  
+  
+  <li>
+    <h2>
+      <a class="post-link" href="/deep-learning/2020/06/01/keras-%EB%BD%80%EA%B0%9C%EA%B8%B0-(1)-Layer%EB%9E%80.html">keras 뽀개기 (1) Layer란?</a>
+    </h2>
+    <section class="post-excerpt" itemprop="description">
+      <p>딥러닝에서 모델은 레이어(Layer) 으로 구성합니다. 입력층, 은닉층, 출력층을 순서에 맞게 연결하여 하나의 모형을 구성합니다. keras도 똑같이 레이어(Layer)을 기준으로 모델을 작성합니다. keras의 레이어를 하나씩 뜯어보며 어떻게 동작하는지를 파악해보도록 하겠습니다. keras의 레이어란 딥러닝 모형은 레이어으로 이루어져 있습니다. 대표적인 딥러닝 모형으로 VGG-Net을 살펴봅시다. VGG-Net은 영상 분류 모형으로, 영상을 입력으로 받아 어떤 라벨인지 맞추는...</p>
+    </section>
+    <section class="post-meta">
+      <div class="post-date">June 1, 2020</div>
+      <div class="post-categories">
+      in 
+        
+        <a href="/category/deep-learning">Deep-learning</a>
+        
+      
+      </div>
+    </section>
+  </li>
+  
+  
+</ul>
+
+<nav class="pagination" role="navigation">
+	<p>
+    
+		<span class="fa-stack fa-lg">
+      <i class="fa fa-square fa-stack-2x"></i>
+      <i class="fa fa-angle-double-left fa-stack-1x fa-inverse"></i>
+    </span>
+		
+		<span class="page-number">Page 1 of 1</span>
+		
+		<span class="fa-stack fa-lg">
+      <i class="fa fa-square fa-stack-2x"></i>
+      <i class="fa fa-angle-double-right fa-stack-1x fa-inverse"></i>
+    </span>
+		
+	</p>
+</nav>
+
+</div>
+</div>
+
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <h3 class="footer-heading">개발 공방</h3>
+
+    <div class="site-navigation">
+
+      <p><strong>Site Map</strong></p>
+      <ul class="pages">
+				
+	
+	<li class="nav-link"><a href="/about/">About</a>
+	
+
+	
+
+	
+
+	
+	<li class="nav-link"><a href="/posts/">Posts</a>
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+      </ul>
+    </div>
+
+    <div class="site-contact">
+
+      <p><strong>Contact</strong></p>
+      <ul class="social-media-list">
+        <li>
+          <a href="mailto:craftsangjae@gmail.com">
+            <i class="fa fa-envelope-o"></i>
+            <span class="username">craftsangjae@gmail.com</span>
+          </a>
+        </li>
+
+        
+          
+        
+          
+        
+          
+          <li>
+            <a href="https://github.com/craftsangjae" title="Fork me on GitHub">
+              <i class="fa fa-github"></i>
+              <span class="username">craftsangjae</span>
+            </a>
+          </li>
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+
+      </ul>
+    </div>
+
+    <div class="site-signature">
+      <p class="rss-subscribe text"><strong>Subscribe <a href="/feed.xml">via RSS</a></strong></p>
+      <p class="text">Data Engineer with Deep Learning
+</p>
+    </div>
+
+  </div>
+
+</footer>
+
+<!-- Scripts -->
+<script src="//code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.1/js/lightbox.min.js"></script>
+<script src="//unpkg.com/popper.js@1"></script>
+<script src="//unpkg.com/tippy.js@5"></script>
+
+<script type="text/javascript">
+$(document).ready(function() {
+  // Default syntax highlighting
+  hljs.initHighlightingOnLoad();
+
+  // Header
+  var menuToggle = $('#js-mobile-menu').unbind();
+  $('#js-navigation-menu').removeClass("show");
+  menuToggle.on('click', function(e) {
+    e.preventDefault();
+    $('#js-navigation-menu').slideToggle(function(){
+      if($('#js-navigation-menu').is(':hidden')) {
+        $('#js-navigation-menu').removeAttr('style');
+      }
+    });
+  });
+
+	// Enable tooltips via Tippy.js
+	if (Array.isArray(window.tooltips)) {
+		window.tooltips.forEach(function(tooltip) {
+			var selector = tooltip[0];
+			var config = tooltip[1];
+			tippy(selector, config);
+		})
+	}
+});
+
+</script>
+
+
+
+
+<!-- Google Analytics -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-167872800-1', 'auto');
+  ga('send', 'pageview', {
+    'page': '/index.html',
+    'title': '개발 공방'
+  });
+</script>
+
+
+
+  </body>
+
+</html>

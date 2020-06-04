@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>개발 공방</title>
+    <description>Data Engineer with Deep Learning
+</description>
+    <link>craftsangjae.github.io/</link>
+    <atom:link href="craftsangjae.github.io/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Fri, 05 Jun 2020 00:19:55 +0900</pubDate>
+    <lastBuildDate>Fri, 05 Jun 2020 00:19:55 +0900</lastBuildDate>
+    <generator>Jekyll v3.8.6</generator>
+    
+      <item>
+        <title>AB 테스팅을 효과적으로 하는 알고리즘, 톰슨 샘플링</title>
+        <description>&lt;h2 id=&quot;objective&quot;&gt;Objective&lt;/h2&gt; &lt;p&gt;우리가 아이폰 11을 팔아야 하는 마케터라고 상상해봅시다. 아이폰 11에 대한 랜딩 페이지를 기획하는 중에 있습니다. 팀원들과 토의하는 중, 아래와 같이 총 3개의 제품 스틸컷이 나왔습니다.&lt;/p&gt; &lt;p&gt;&lt;img src=&quot;https://imgur.com/OVABmio.png&quot; width=&quot;500&quot;...</description>
+        <pubDate>Thu, 04 Jun 2020 09:10:52 +0900</pubDate>
+        <link>craftsangjae.github.io/machine-learning/2020/06/04/AB-%ED%85%8C%EC%8A%A4%ED%8C%85%EC%9D%84-%ED%9A%A8%EA%B3%BC%EC%A0%81%EC%9C%BC%EB%A1%9C-%ED%95%98%EB%8A%94-%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98,-%ED%86%B0%EC%8A%A8-%EC%83%98%ED%94%8C%EB%A7%81.html</link>
+        <guid isPermaLink="true">craftsangjae.github.io/machine-learning/2020/06/04/AB-%ED%85%8C%EC%8A%A4%ED%8C%85%EC%9D%84-%ED%9A%A8%EA%B3%BC%EC%A0%81%EC%9C%BC%EB%A1%9C-%ED%95%98%EB%8A%94-%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98,-%ED%86%B0%EC%8A%A8-%EC%83%98%ED%94%8C%EB%A7%81.html</guid>
+        
+        <category>recommender-system</category>
+        
+        
+        <category>machine-learning</category>
+        
+      </item>
+    
+      <item>
+        <title>카테고리형(명목형) 변수를 가진 데이터를 딥러닝으로 풀어보자 (with Bank Marketing Data Set)</title>
+        <description>&lt;h2 id=&quot;objective&quot;&gt;Objective&lt;/h2&gt; &lt;p&gt;많은 캐글대회나 머신러닝 예제들을 보면, 카테고리형(명목형) 변수를 가진 데이터는 대체로 Decision Tree 계통의 모형으로 해결합니다. 하지만 딥러닝도 Decision Tree 만큼이나 효과적으로 카테고리형(명목형) 변수를 우수하게 처리할 수 있습니다. &lt;a...</description>
+        <pubDate>Wed, 03 Jun 2020 19:26:34 +0900</pubDate>
+        <link>craftsangjae.github.io/deep-learning/2020/06/03/%EC%B9%B4%ED%85%8C%EA%B3%A0%EB%A6%AC%ED%98%95(%EB%AA%85%EB%AA%A9%ED%98%95)-%EB%B3%80%EC%88%98%EB%A5%BC-%EA%B0%80%EC%A7%84-%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A5%BC-%EB%94%A5%EB%9F%AC%EB%8B%9D%EC%9C%BC%EB%A1%9C-%ED%92%80%EC%96%B4%EB%B3%B4%EC%9E%90-(with-Bank-Marketing-Data-Set).html</link>
+        <guid isPermaLink="true">craftsangjae.github.io/deep-learning/2020/06/03/%EC%B9%B4%ED%85%8C%EA%B3%A0%EB%A6%AC%ED%98%95(%EB%AA%85%EB%AA%A9%ED%98%95)-%EB%B3%80%EC%88%98%EB%A5%BC-%EA%B0%80%EC%A7%84-%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A5%BC-%EB%94%A5%EB%9F%AC%EB%8B%9D%EC%9C%BC%EB%A1%9C-%ED%92%80%EC%96%B4%EB%B3%B4%EC%9E%90-(with-Bank-Marketing-Data-Set).html</guid>
+        
+        <category>practice</category>
+        
+        
+        <category>deep-learning</category>
+        
+      </item>
+    
+      <item>
+        <title>keras 뽀개기 (3) 모형 학습시키기</title>
+        <description>&lt;p&gt;keras에서의 모델 학습은 &lt;code class=&quot;highlighter-rouge&quot;&gt;model.fit&lt;/code&gt;으로 high-level API로 이루어집니다. 모델의 손실함수와 옵티마이저를 지정하고, 데이터를 넣으면 데이터에 맞게 모형의 가중치를 갱신합니다. 무척 편하지만, 어떻게 돌아가는지를 알지 못하면 튜닝하기도 어렵습니다. 간단한 예시로 한번...</description>
+        <pubDate>Tue, 02 Jun 2020 00:08:48 +0900</pubDate>
+        <link>craftsangjae.github.io/deep-learning/2020/06/02/keras-%EB%BD%80%EA%B0%9C%EA%B8%B0-(3)-%EB%AA%A8%ED%98%95-%ED%95%99%EC%8A%B5%EC%8B%9C%ED%82%A4%EA%B8%B0.html</link>
+        <guid isPermaLink="true">craftsangjae.github.io/deep-learning/2020/06/02/keras-%EB%BD%80%EA%B0%9C%EA%B8%B0-(3)-%EB%AA%A8%ED%98%95-%ED%95%99%EC%8A%B5%EC%8B%9C%ED%82%A4%EA%B8%B0.html</guid>
+        
+        <category>tensorflow</category>
+        
+        
+        <category>deep-learning</category>
+        
+      </item>
+    
+      <item>
+        <title>keras 뽀개기 (2) 모형을 구성하기, Model</title>
+        <description>&lt;p&gt;keras는 레이어 단위로 연산하고 가중치를 관리합니다. 딥러닝은 수십~수백개의 레이어로 이루어져 있기 때문에, 이를 일괄적으로 관리하는 툴이 필요합니다. 그것이 바로 Keras의 &lt;code class=&quot;highlighter-rouge&quot;&gt;Model&lt;/code&gt;입니다.&lt;/p&gt; &lt;h2 id=&quot;keras의-model&quot;&gt;Keras의 Model&lt;/h2&gt; &lt;p&gt;&lt;img src=&quot;https://imgur.com/CBgGgkb.png&quot; width=&quot;200&quot; /&gt;&lt;/p&gt; &lt;p&gt;딥러닝...</description>
+        <pubDate>Mon, 01 Jun 2020 19:28:43 +0900</pubDate>
+        <link>craftsangjae.github.io/deep-learning/2020/06/01/Keras-%EB%BD%80%EA%B0%9C%EA%B8%B0-(2)-%EB%AA%A8%ED%98%95%EC%9D%84-%EA%B5%AC%EC%84%B1%ED%95%98%EA%B8%B0,-Model.html</link>
+        <guid isPermaLink="true">craftsangjae.github.io/deep-learning/2020/06/01/Keras-%EB%BD%80%EA%B0%9C%EA%B8%B0-(2)-%EB%AA%A8%ED%98%95%EC%9D%84-%EA%B5%AC%EC%84%B1%ED%95%98%EA%B8%B0,-Model.html</guid>
+        
+        <category>tensorflow</category>
+        
+        
+        <category>deep-learning</category>
+        
+      </item>
+    
+      <item>
+        <title>keras 뽀개기 (1) Layer란?</title>
+        <description>&lt;p&gt;딥러닝에서 모델은 &lt;strong&gt;레이어(Layer)&lt;/strong&gt; 으로 구성합니다. 입력층, 은닉층, 출력층을 순서에 맞게 연결하여 하나의 모형을 구성합니다. keras도 똑같이 레이어(Layer)을 기준으로 모델을 작성합니다. keras의 레이어를 하나씩 뜯어보며 어떻게 동작하는지를 파악해보도록 하겠습니다.&lt;/p&gt; &lt;h2 id=&quot;keras의-레이어란&quot;&gt;keras의...</description>
+        <pubDate>Mon, 01 Jun 2020 19:15:32 +0900</pubDate>
+        <link>craftsangjae.github.io/deep-learning/2020/06/01/keras-%EB%BD%80%EA%B0%9C%EA%B8%B0-(1)-Layer%EB%9E%80.html</link>
+        <guid isPermaLink="true">craftsangjae.github.io/deep-learning/2020/06/01/keras-%EB%BD%80%EA%B0%9C%EA%B8%B0-(1)-Layer%EB%9E%80.html</guid>
+        
+        <category>tensorflow</category>
+        
+        
+        <category>deep-learning</category>
+        
+      </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>AB 테스팅을 효과적으로 하는 알고리즘, 톰슨 샘플링</title>
+  <meta name="description" content="Objective">
+  
+  <meta name="author" content="SangJae Kang">
+  <meta name="copyright" content="&copy; SangJae Kang 2020">
+  
+
+  <!-- External libraries -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/github.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/css/lightbox.css">
+
+  <!-- Favicon and other icons (made with http://www.favicon-generator.org/) -->
+  <link rel="shortcut icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" sizes="57x57" href="/assets/icons/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/assets/icons/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/assets/icons/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/assets/icons/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/assets/icons/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/assets/icons/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/assets/icons/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/assets/icons/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192"  href="/assets/icons/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/icons/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16.png">
+  <link rel="manifest" href="/assets/icons/manifest.json">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="/assets/icons/ms-icon-144x144.png">
+  <meta name="theme-color" content="#ffffff">
+
+  
+  <!-- Facebook OGP cards -->
+  <meta property="og:description" content="Objective" />
+  <meta property="og:url" content="craftsangjae.github.io/machine-learning/2020/06/04/AB-%ED%85%8C%EC%8A%A4%ED%8C%85%EC%9D%84-%ED%9A%A8%EA%B3%BC%EC%A0%81%EC%9C%BC%EB%A1%9C-%ED%95%98%EB%8A%94-%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98,-%ED%86%B0%EC%8A%A8-%EC%83%98%ED%94%8C%EB%A7%81.html">
+  <meta property="og:site_name" content="개발 공방" />
+  <meta property="og:title" content="AB 테스팅을 효과적으로 하는 알고리즘, 톰슨 샘플링" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="craftsangjae.github.io/assets/logo.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="612" />
+  <meta property="og:image:height" content="605" />
+  
+
+  
+  <!-- Twitter: card tags -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="AB 테스팅을 효과적으로 하는 알고리즘, 톰슨 샘플링">
+  <meta name="twitter:description" content="Objective">
+  <meta name="twitter:image" content="craftsangjae.github.io/assets/logo.png">
+  <meta name="twitter:url" content="craftsangjae.github.io/machine-learning/2020/06/04/AB-%ED%85%8C%EC%8A%A4%ED%8C%85%EC%9D%84-%ED%9A%A8%EA%B3%BC%EC%A0%81%EC%9C%BC%EB%A1%9C-%ED%95%98%EB%8A%94-%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98,-%ED%86%B0%EC%8A%A8-%EC%83%98%ED%94%8C%EB%A7%81.html">
+  
+
+  
+
+  
+    <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    TeX: {
+      equationNumbers: {
+        autoNumber: "AMS"
+      }
+    },
+    tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$'] ],
+    processEscapes: true,
+  }
+});
+MathJax.Hub.Register.MessageHook("Math Processing Error",function (message) {
+	  alert("Math Processing Error: "+message[1]);
+	});
+MathJax.Hub.Register.MessageHook("TeX Jax - parse error",function (message) {
+	  alert("Math Processing Error: "+message[1]);
+	});
+</script>
+<script type="text/javascript" async
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+  
+
+
+  <!-- Site styles -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="craftsangjae.github.io/machine-learning/2020/06/04/AB-%ED%85%8C%EC%8A%A4%ED%8C%85%EC%9D%84-%ED%9A%A8%EA%B3%BC%EC%A0%81%EC%9C%BC%EB%A1%9C-%ED%95%98%EB%8A%94-%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98,-%ED%86%B0%EC%8A%A8-%EC%83%98%ED%94%8C%EB%A7%81.html">
+	<link rel="alternate" type="application/rss+xml" title="개발 공방" href="craftsangjae.github.io/feed.xml" />
+	
+	<!-- Tooltips -->
+	<script type="text/javascript">
+		window.tooltips = []
+	</script>
+  <style type="text/css">
+  .input_area div.highlighter-rouge {
+    background-color: #263238  !important;
+  }
+
+  div.highlighter-rouge, figure.highlight {
+    /*font-size: 0.675em  !important;*/
+  }
+
+  .output_stream, .output_data_text, .output_traceback_line {
+    margin-left: 3% !important;
+    border: none !important;
+    border-radius: 4px !important;
+    background-color: #fafafa !important;
+    box-shadow: none !important;
+    color: #000000  !important;
+    /*font-size: 0.6em !important;*/
+  }
+
+  .output_stream:before, .output_data_text:before, .output_traceback_line:before{
+    content: none !important;
+  }
+
+  table.dataframe {
+      background-color: #fafafa;
+      width: 100%;
+      max-height: 240px;
+      display: block;
+      overflow: auto;
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+      line-height: 20px;
+      text-align: center;
+  }
+  table.dataframe th {
+    font-weight: bold;
+    padding: 4px;
+  }
+  table.dataframe td {
+    padding: 4px;
+  }
+  table.dataframe tr:hover {
+    background: #b8d1f3;
+  }
+
+  </style>
+  
+</head>
+
+
+  <body>
+
+    <header class="navigation" role="banner">
+  <div class="navigation-wrapper">
+    <a href="/" class="logo">
+      
+      <img src="/assets/logo.png" alt="개발 공방">
+      
+    </a>
+    <a href="javascript:void(0)" class="navigation-menu-button" id="js-mobile-menu">
+      <i class="fa fa-bars"></i>
+    </a>
+    <nav role="navigation">
+      <ul id="js-navigation-menu" class="navigation-menu show">
+				
+	
+	<li class="nav-link"><a href="/about/">About</a>
+	
+
+	
+
+	
+
+	
+	<li class="nav-link"><a href="/posts/">Posts</a>
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+      </ul>
+    </nav>
+  </div>
+</header>
+
+
+    <div class="page-content">
+        <div class="post">
+
+<div class="post-header-container " >
+  <div class="scrim ">
+    <header class="post-header">
+      <h1 class="title">AB 테스팅을 효과적으로 하는 알고리즘, 톰슨 샘플링</h1>
+      <p class="info">by <strong>sangjae kang</strong></p>
+    </header>
+  </div>
+</div>
+
+<div class="wrapper">
+
+ <span class="page-divider">
+  <span class="one"></span>
+  <span class="two"></span>
+</span>
+ 
+
+<section class="post-meta">
+  <div class="post-date">June 4, 2020</div>
+  <div class="post-categories">
+  in 
+    
+    <a href="/category/machine-learning">Machine-learning</a>
+    
+  
+  </div>
+</section>
+
+<article class="post-content">
+  <h2 id="objective">Objective</h2>
+
+<p>우리가 아이폰 11을 팔아야 하는 마케터라고 상상해봅시다. 아이폰 11에 대한 랜딩 페이지를 기획하는 중에 있습니다. 팀원들과 토의하는 중, 아래와 같이 총 3개의 제품 스틸컷이 나왔습니다.</p>
+
+<p><img src="https://imgur.com/OVABmio.png" width="500" /></p>
+
+<p>이 3개 중에서 하나를 골라야 하는데, 도대체 어떤 이미지가 고객들이 가장 좋아할 만한 이미지인지 선택하기 어렵습니다. <em>우리는 어떤 식으로 제품 스틸컷을 골라야 할까요?</em></p>
+
+<h3 id="ab-testing">A/B Testing</h3>
+
+<p>위와 같은 상황에서 제일 좋은 방식은 직접 고객들에게 노출시킨 후 그 반응을 확인하는 것입니다. 고객들에게 무작위로 여러 버전(A,B)들을 제시하고, 고객의 반응을 정량적으로 측정하는 방식을 <strong>A/B Testing</strong>이라 합니다.</p>
+
+<p><img src="https://images.ctfassets.net/zw48pl1isxmc/4QYN7VubAAgEAGs0EuWguw/165749ef2fa01c1c004b6a167fd27835/ab-testing.png" width="500" /></p>
+
+<p>하지만 고객에게 A/B Testing을 할 때에는 우리는 <strong>기회비용</strong>을 항상 고민해야 합니다. 테스팅 과정을 수행하면서 좋지 못한 버전에 노출된 고객들은 우리가 놓쳐 버린 고객들이 됩니다. 그래서 적은 횟수로 빠르게 어떤 버전이 좀 더 고객들에게 좋은 반응을 얻고 있는지를 우리는 알고 싶습니다. 이러한 유형의 문제들을 통칭해 멀티 암드 밴딧(multi armed bandit)이라 합니다.</p>
+
+<h3 id="멀티-암드-밴딧">멀티 암드 밴딧</h3>
+
+<p><img src="https://paperswithcode.com/media/thumbnails/task/task-0000000902-cfda1c60_HmUi8CF.jpg" width="300" /></p>
+
+<p>멀티 암드 밴딧은 아래와 같이 요약할 수 있습니다.</p>
+
+<blockquote>
+  <p>N 개의 선택지가 존재한다. 각 선택지를 선택했을 때 이익은 다르다. 하지만 나는 각 선택지 별 이익이 어떠한지 지금 모른다. 여기서 어떤 선택지를 골랐을 때 가장 이익을 많이 얻을 수 있을까? 최적으로 선택지를 고르는 방법을 모색해 보자.</p>
+</blockquote>
+
+<p>우리가 최대의 이익을 얻는 방법은 <strong>항상 이익이 가장 큰 선택지를 고르는 것</strong>입니다. 하지만 우리는 어떤 선택이 이익이 큰지 모르기 때문에, 각 선택지 별로 이익의 크기를 탐색하는 과정을 거쳐야 합니다. 최소한의 탐색 횟수로 각 선택지의 이익이 얼마나 될지를 추론하는 것이 핵심이 됩니다.</p>
+
+<h2 id="멀티-암드-밴딧의-해결책--톰슨-샘플링">멀티 암드 밴딧의 해결책 : 톰슨 샘플링</h2>
+
+<p>이 때 가장 많이 쓰이는 알고리즘이 바로 톰슨 샘플링입니다. 매번 선택을 하면서, 각각의 선택지에 대한 확률을 추론하는 알고리즘입니다. 톰슨 샘플링은 베타 분포라는 확률 분포를 이용합니다. 베타 분포가 어떤 의미를 가지는지는 아래를 통해 보도록 하겠습니다.</p>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 필요한 라이브러리 가져오기
+</span><span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">beta</span>
+<span class="kn">from</span> <span class="nn">tensorflow.keras.utils</span> <span class="kn">import</span> <span class="n">get_file</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+</code></pre></div>  </div>
+
+</div>
+
+<h3 id="베타-분포란">베타 분포란?</h3>
+
+<p>베타 분포는 $\alpha$와 $\beta$라는 두 모수를 가지며 표본 공간은 0과 1 사이의 실수인 분포입니다.</p>
+
+<script type="math/tex; mode=display">Beta(x;\alpha,\beta) = \frac{1}{B(\alpha,\beta)}x^{(\alpha-1)}(1-x)^{(\beta-1)}</script>
+
+<p>Beta 분포는 모수 $\alpha$,$\beta$를 통해 기댓값, 분산, 최빈값을 쉽게 추론할 수 있습니다.</p>
+
+<ul>
+  <li>기댓값 : $E[x] = \frac{\alpha}{\alpha+\beta}$</li>
+  <li>분산 : $Var[x] = \frac{\alpha\beta}{(\alpha+\beta)^2(\alpha+\beta+1)}$</li>
+  <li>최빈값 : $Mode[x] = \frac{\alpha-1}{\alpha+\beta-2}$</li>
+</ul>
+
+<p>베타 분포는 <strong>어떤 값에 대해 얼마나 확신하고 있는가</strong>를 표현할 때 주로 쓰이는 분포입니다. 예를 들어, 우리가 복권을 긁어서 당첨될 확률을 알려고 한다고 해봅시다. 20번을 긁어서 1번 당첨됐을 때 “이 복권은 5% 확률로 당첨될 거 같아!” 라고 친구가 말하면, 그 말을 믿을 수 있을까요? 아마 그렇게 확신하긴 어려울 것입니다. 왜냐면 너무 적은 횟수로 시도했기 때문이죠. 이를 베타 분포로 표현하면 아래와 같습니다.</p>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">lucky</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1"># 성공한 횟수
+</span><span class="n">fail</span>  <span class="o">=</span> <span class="mi">19</span> <span class="c1"># 실패 횟수
+</span>
+<span class="n">dist_20</span> <span class="o">=</span> <span class="n">beta</span><span class="p">(</span><span class="n">lucky</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">fail</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># 베타 분포로 표현
+</span><span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">num</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">dist_20</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">xs</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s">'g'</span><span class="p">,</span> 
+         <span class="n">label</span><span class="o">=</span><span class="n">f</span><span class="s">"# Trial : {lucky+fail}"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div>  </div>
+
+</div>
+
+<p>Output :</p>
+
+<p><img src="https://imgur.com/A8bjcss.png" alt="png" /></p>
+
+<p>이 분포에서 x축은 당첨될 확률을 의미하고, y축은 당첨될 확률에 대한 <strong>확신의 수준</strong>을 의미합니다. y축이 가장 높은 지점이 현재는 5%이지만, 아직은 완만하게 퍼져있습니다.</p>
+
+<p>좀 더 시도를 많이해 60번을 해서, 3번을 성공했다고 해봅시다. 그러면 확률이 어떻게 변할까요?</p>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">lucky</span> <span class="o">=</span> <span class="mi">3</span>  <span class="c1"># 성공한 횟수
+</span><span class="n">fail</span>  <span class="o">=</span> <span class="mi">57</span> <span class="c1"># 실패 횟수
+</span><span class="n">dist_60</span> <span class="o">=</span> <span class="n">beta</span><span class="p">(</span><span class="n">lucky</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">fail</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># 베타 분포로 표현
+</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">dist_20</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">xs</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s">'g'</span><span class="p">,</span> 
+         <span class="n">label</span><span class="o">=</span><span class="s">"# Trial : 20"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">dist_50</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">xs</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s">'b'</span><span class="p">,</span> 
+         <span class="n">label</span><span class="o">=</span><span class="s">"# Trial : 60"</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div>  </div>
+
+</div>
+
+<p>Output :</p>
+
+<p><img src="https://imgur.com/fHz0UA9.png" alt="png" /></p>
+
+<p>이러한 베타 분포를 이용해, 톰슨 샘플링은 각 선택지의 확률 분포를 계산합니다. 매 시도 때마다 베타 분포에 따라 가장 큰 이익을 산출하는 선택지를 선택해보고, 해당 선택지의 확률 분포를 갱신하게 됩니다. 글로는 이해하기 어려우니 밑에서 동작하는 프로그램을 통해 살펴보도록 하겠습니다.</p>
+
+<h2 id="예제-상황--톰슨-샘플링으로-ab-test-진행하기">예제 상황 ) 톰슨 샘플링으로 A/B Test 진행하기</h2>
+
+<p><img src="https://imgur.com/OVABmio.png" width="500" /></p>
+
+<p>우리에게는 3가지 이미지가 있습니다. 세 이미지 모두 고객이 관심을 유도하여, 제품 페이지 클릭을 유도하기 위해 설계되어 있습니다. 즉 높은 클릭율(CTR)일수록 좋은 이미지입니다. 하지만 우리는 셋 중 어느 이미지가 높은 CTR을 가질지를 모릅니다. 이 때 우리는 어떻게 시도하는 것이 좋을까요?</p>
+
+<p>마케팅 상황을 재현하기 위해 아래에 <code class="highlighter-rouge">simulator</code> 클래스를 구현하였습니다. 매 고객 별로 어떤 상품을 노출시키냐에 따라 클릭할지 안할지를 알려주는 역할을 합니다.</p>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Simulator</span><span class="p">:</span>
+    <span class="n">fpath</span> <span class="o">=</span> <span class="n">get_file</span><span class="p">(</span>
+        <span class="s">'ads_simulation.csv'</span><span class="p">,</span>
+        <span class="s">'https://docs.google.com/uc?id=1uHFOZ0DTHaX45f26xCbj_G3eptRblXiu'</span><span class="p">)</span>
+    <span class="n">simulation_cases</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fpath</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">selections</span> <span class="o">=</span> <span class="p">[</span><span class="s">"case1"</span><span class="p">,</span> <span class="s">"case2"</span><span class="p">,</span> <span class="s">"case3"</span><span class="p">]</span>
+    
+    <span class="k">def</span> <span class="nf">choose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selection</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">selection</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">selections</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx</span> <span class="o">%</span> <span class="mi">10000</span>
+        <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">simulation_cases</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span><span class="n">selection</span><span class="p">])</span>
+    
+<span class="c1"># 시뮬레이터 런치하기
+</span><span class="n">simulator</span> <span class="o">=</span> <span class="n">Simulator</span><span class="p">()</span>    
+</code></pre></div>  </div>
+
+</div>
+
+<p>시뮬레이터의 <code class="highlighter-rouge">choose()</code>은 매번 고객에게 노출시킨 후 고객이 페이지를 클릭했는지 안했는지를 평가받는 메소드입니다. 아래와 같이 반복적으로 호출함으로써, 고객에 대한 반응을 수집할 수 있습니다.</p>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">print</span><span class="p">(</span><span class="s">" case1 만으로 고객에게 노출한 경우"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">choose</span><span class="p">(</span><span class="s">'case1'</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">"  {}th 시도 : {}"</span><span class="o">.</span><span class="nb">format</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">result</span><span class="p">))</span>
+    
+<span class="k">print</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s"> case2 만으로 고객에게 노출한 경우"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">choose</span><span class="p">(</span><span class="s">'case2'</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">"  {}th 시도 : {}"</span><span class="o">.</span><span class="nb">format</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">result</span><span class="p">))</span>    
+    
+<span class="k">print</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s"> case3 만으로 고객에게 노출한 경우"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">choose</span><span class="p">(</span><span class="s">'case3'</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">"  {}th 시도 : {}"</span><span class="o">.</span><span class="nb">format</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">result</span><span class="p">))</span>        
+</code></pre></div>  </div>
+
+</div>
+
+<p>Output :</p>
+
+<div class="output_stream highlighter-rouge"><div class="highlight"><pre class="highlight"><code> case1 만으로 고객에게 노출한 경우
+  0th 시도 : False
+  1th 시도 : False
+  2th 시도 : False
+  3th 시도 : False
+  4th 시도 : False
+
+ case2 만으로 고객에게 노출한 경우
+  0th 시도 : False
+  1th 시도 : False
+  2th 시도 : False
+  3th 시도 : False
+  4th 시도 : False
+
+ case3 만으로 고객에게 노출한 경우
+  0th 시도 : False
+  1th 시도 : False
+  2th 시도 : False
+  3th 시도 : False
+  4th 시도 : True
+
+</code></pre></div></div>
+
+<h3 id="가장-쉽게-ctr을-구하는-방법--빈도-기반-확률-계산">가장 쉽게 CTR을 구하는 방법 : 빈도 기반 확률 계산</h3>
+
+<p>각각 이미지 별로 1000번씩 고객에게 노출시켰다고 생각해 봅시다.</p>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">case1_clicks</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">):</span>
+    <span class="n">case1_clicks</span> <span class="o">+=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">choose</span><span class="p">(</span><span class="s">'case1'</span><span class="p">)</span>
+<span class="n">case1_clicks</span> <span class="o">/</span> <span class="mi">1000</span>
+</code></pre></div>  </div>
+
+</div>
+
+<p>Output :</p>
+
+<div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>0.069
+</code></pre></div></div>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">case2_clicks</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">):</span>
+    <span class="n">case2_clicks</span> <span class="o">+=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">choose</span><span class="p">(</span><span class="s">'case2'</span><span class="p">)</span>
+<span class="n">case2_clicks</span> <span class="o">/</span> <span class="mi">1000</span>
+</code></pre></div>  </div>
+
+</div>
+
+<p>Output :</p>
+
+<div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>0.212
+</code></pre></div></div>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">case3_clicks</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">):</span>
+    <span class="n">case3_clicks</span> <span class="o">+=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">choose</span><span class="p">(</span><span class="s">'case3'</span><span class="p">)</span>
+<span class="n">case3_clicks</span> <span class="o">/</span> <span class="mi">1000</span>
+</code></pre></div>  </div>
+
+</div>
+
+<p>Output :</p>
+
+<div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>0.259
+</code></pre></div></div>
+
+<p>우리는 총 3000번의 시도를 통해, 3번째 이미지에 대한 CTR이 가장 높다는 것을 알아냈습니다. 우리가 처음부터 세번째 이미지의 CTR이 가장 높았다는 것을 알았더라면, 800여번을 클릭 횟수를 이루어냈을텐데, 실험하는 과정에서 반응이 좋지 못한 Case1과 Case2로 인해, 500여번의 훨씬 적은 클릭 횟수를 기록했습니다. 즉 우리는 300여번의 클릭을 놓친 셈이 됩니다. 이러한 것들은 기업의 입장에서는 모두 비용에 해당하게 됩니다. 이를 줄이는 방법이 바로 톰슨 샘플링입니다.</p>
+
+<h2 id="톰슨-샘플링-알고리즘-구현하기">톰슨 샘플링 알고리즘 구현하기</h2>
+
+<p>톰슨 샘플링은 아래와 같이 굉장히 간단합니다. 이론은 어렵지만 구현은 굉장히 간단하죠.</p>
+
+<p><img src="https://t4.daumcdn.net/thumb/R720x0/?fname=http://t1.daumcdn.net/brunch/service/user/IgT/image/zSSTskSW0U73xmBRHsYyHsPJHsQ.png" alt="" /></p>
+
+<h3 id="thompson-sampling을-통한-ctr-추정하기">Thompson Sampling을 통한 CTR 추정하기</h3>
+
+<p>아래는 톰슨 샘플링을 1000번 시도한 결과입니다.</p>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">arms</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">)),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">'alpha'</span><span class="p">,</span><span class="s">'beta'</span><span class="p">],</span>
+                    <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s">'case1'</span><span class="p">,</span><span class="s">'case2'</span><span class="p">,</span><span class="s">'case3'</span><span class="p">])</span>
+
+<span class="n">clicks</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3000</span><span class="p">):</span>
+    <span class="c1"># Visualization
+</span>    <span class="k">if</span> <span class="n">idx</span> <span class="o">%</span> <span class="mi">1000</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">arms</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="o">+</span><span class="mf">1e-5</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="mf">1e-5</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
+            <span class="n">ys</span> <span class="o">=</span> <span class="n">beta</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">beta</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span><span class="n">ys</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">f</span><span class="s">'{idx}th attempt'</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        
+    <span class="c1"># Sampling Model
+</span>    <span class="n">bandit_result</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">beta</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">beta</span><span class="p">)</span> 
+                     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">arms</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()}</span>
+    
+    <span class="c1"># Select 
+</span>    <span class="n">chosen_model</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">bandit_result</span><span class="p">)</span><span class="o">.</span><span class="n">idxmax</span><span class="p">()</span>    
+    
+    <span class="c1"># Update Distribution
+</span>    <span class="n">click</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">choose</span><span class="p">(</span><span class="n">chosen_model</span><span class="p">)</span>
+    <span class="n">clicks</span> <span class="o">+=</span> <span class="n">click</span>
+    <span class="k">if</span> <span class="n">click</span><span class="p">:</span>
+        <span class="c1"># Success
+</span>        <span class="n">arms</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">chosen_model</span><span class="p">,</span><span class="s">'alpha'</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Fail
+</span>        <span class="n">arms</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">chosen_model</span><span class="p">,</span><span class="s">'beta'</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>        
+</code></pre></div>  </div>
+
+</div>
+
+<p>Output :</p>
+
+<p><img src="https://imgur.com/NKlnVCc.png" alt="png" /></p>
+
+<p><img src="https://imgur.com/YKbQCs9.png" alt="png" /></p>
+
+<p><img src="https://imgur.com/Vo2Ivfr.png" alt="png" /></p>
+
+<p>톰슨 샘플링과정에서 우리가 확인할 수 있는 것은 가장 반응이 좋지 못한 case1은 몇 번의 시도 후, 더이상 시도하지 않았고 반응이 비슷한 case2와 case3를 중심으로 고객들에게 노출시켰음을 알 수 있습니다. 즉 톰슨샘플링은 기대 효과가 가장 낮은 것들부터 확률적으로 제거해나갑니다. 그럼으로써 거의 Case3만 선택했을 때(최적 결과)와 근사한 수준으로 클릭 횟수를 이끌어냈습니다.</p>
+
+<div class="input_area">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">print</span><span class="p">(</span><span class="s">"각 이미지 별 시도 횟수"</span><span class="p">)</span>
+<span class="k">print</span><span class="p">((</span><span class="n">arms</span><span class="o">.</span><span class="n">alpha</span><span class="o">+</span><span class="n">arms</span><span class="o">.</span><span class="n">beta</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s">""</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">"3000번 중 클릭 횟수 : {int(arms.alpha.sum() - 3)}건"</span><span class="p">)</span>
+</code></pre></div>  </div>
+
+</div>
+
+<p>Output :</p>
+
+<div class="output_stream highlighter-rouge"><div class="highlight"><pre class="highlight"><code>각 이미지 별 시도 횟수
+case1      19
+case2     164
+case3    2817
+dtype: int64
+
+3000번 중 클릭 횟수 : 810건
+
+</code></pre></div></div>
+
+</article>
+
+
+
+<section class="tags">
+  <strong>Tags:</strong> <a href="/tag/recommender-system">recommender-system</a>
+</section>
+
+
+
+<section class="rss">
+  <p class="rss-subscribe text"><strong>Subscribe <a href="/feed.xml">via RSS</a></strong></p>
+</section>
+
+<section class="share">
+  <span>Share: </span>
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+      <a href="//www.pinterest.com/pin/create/button/?description=AB+%ED%85%8C%EC%8A%A4%ED%8C%85%EC%9D%84+%ED%9A%A8%EA%B3%BC%EC%A0%81%EC%9C%BC%EB%A1%9C+%ED%95%98%EB%8A%94+%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98%2C+%ED%86%B0%EC%8A%A8+%EC%83%98%ED%94%8C%EB%A7%81&url=craftsangjae.github.io%2Fmachine-learning%2F2020%2F06%2F04%2FAB-%25ED%2585%258C%25EC%258A%25A4%25ED%258C%2585%25EC%259D%2584-%25ED%259A%25A8%25EA%25B3%25BC%25EC%25A0%2581%25EC%259C%25BC%25EB%25A1%259C-%25ED%2595%2598%25EB%258A%2594-%25EC%2595%258C%25EA%25B3%25A0%25EB%25A6%25AC%25EC%25A6%2598%2C-%25ED%2586%25B0%25EC%258A%25A8-%25EC%2583%2598%25ED%2594%258C%25EB%25A7%2581.html&media=craftsangjae.github.io/assets/header_image.jpg"
+        onclick="window.open(this.href, 'pinterest-share', 'width=550,height=255');return false;">
+        <i class="fa fa-pinterest-square fa-lg"></i>
+      </a>
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  
+</section>
+
+	<section class="post-navigation">
+		<span class="prev-post">
+			
+				<a href="/deep-learning/2020/06/03/%EC%B9%B4%ED%85%8C%EA%B3%A0%EB%A6%AC%ED%98%95(%EB%AA%85%EB%AA%A9%ED%98%95)-%EB%B3%80%EC%88%98%EB%A5%BC-%EA%B0%80%EC%A7%84-%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A5%BC-%EB%94%A5%EB%9F%AC%EB%8B%9D%EC%9C%BC%EB%A1%9C-%ED%92%80%EC%96%B4%EB%B3%B4%EC%9E%90-(with-Bank-Marketing-Data-Set).html">
+					<span class="fa-stack fa-lg">
+						<i class="fa fa-square fa-stack-2x"></i>
+						<i class="fa fa-angle-double-left fa-stack-1x fa-inverse"></i>
+					</span>
+					<span class="page-number">카테고리형(명목형) 변수를 가진 데이터를 딥러닝으로 풀어보자 (with Bank Marketing Data Set)</span>
+				</a>
+			
+		</span>
+		<span class="next-post">
+			
+		</span>
+	</section>
+
+
+
+
+<section class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_shortname = 'craftsangjae';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+
+</div>
+</div>
+
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <h3 class="footer-heading">개발 공방</h3>
+
+    <div class="site-navigation">
+
+      <p><strong>Site Map</strong></p>
+      <ul class="pages">
+				
+	
+	<li class="nav-link"><a href="/about/">About</a>
+	
+
+	
+
+	
+
+	
+	<li class="nav-link"><a href="/posts/">Posts</a>
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+      </ul>
+    </div>
+
+    <div class="site-contact">
+
+      <p><strong>Contact</strong></p>
+      <ul class="social-media-list">
+        <li>
+          <a href="mailto:craftsangjae@gmail.com">
+            <i class="fa fa-envelope-o"></i>
+            <span class="username">craftsangjae@gmail.com</span>
+          </a>
+        </li>
+
+        
+          
+        
+          
+        
+          
+          <li>
+            <a href="https://github.com/craftsangjae" title="Fork me on GitHub">
+              <i class="fa fa-github"></i>
+              <span class="username">craftsangjae</span>
+            </a>
+          </li>
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+
+      </ul>
+    </div>
+
+    <div class="site-signature">
+      <p class="rss-subscribe text"><strong>Subscribe <a href="/feed.xml">via RSS</a></strong></p>
+      <p class="text">Data Engineer with Deep Learning
+</p>
+    </div>
+
+  </div>
+
+</footer>
+
+<!-- Scripts -->
+<script src="//code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.1/js/lightbox.min.js"></script>
+<script src="//unpkg.com/popper.js@1"></script>
+<script src="//unpkg.com/tippy.js@5"></script>
+
+<script type="text/javascript">
+$(document).ready(function() {
+  // Default syntax highlighting
+  hljs.initHighlightingOnLoad();
+
+  // Header
+  var menuToggle = $('#js-mobile-menu').unbind();
+  $('#js-navigation-menu').removeClass("show");
+  menuToggle.on('click', function(e) {
+    e.preventDefault();
+    $('#js-navigation-menu').slideToggle(function(){
+      if($('#js-navigation-menu').is(':hidden')) {
+        $('#js-navigation-menu').removeAttr('style');
+      }
+    });
+  });
+
+	// Enable tooltips via Tippy.js
+	if (Array.isArray(window.tooltips)) {
+		window.tooltips.forEach(function(tooltip) {
+			var selector = tooltip[0];
+			var config = tooltip[1];
+			tippy(selector, config);
+		})
+	}
+});
+
+</script>
+
+
+
+
+<!-- Google Analytics -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-167872800-1', 'auto');
+  ga('send', 'pageview', {
+    'page': '/machine-learning/2020/06/04/AB-%ED%85%8C%EC%8A%A4%ED%8C%85%EC%9D%84-%ED%9A%A8%EA%B3%BC%EC%A0%81%EC%9C%BC%EB%A1%9C-%ED%95%98%EB%8A%94-%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98,-%ED%86%B0%EC%8A%A8-%EC%83%98%ED%94%8C%EB%A7%81.html',
+    'title': 'AB 테스팅을 효과적으로 하는 알고리즘, 톰슨 샘플링'
+  });
+</script>
+
+
+
+  </body>
+
+</html>
